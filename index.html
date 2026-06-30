@@ -1,28 +1,63 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Текстовый квест</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Доктор Кто RPG</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Courier New', monospace;
+            color: #fff;
+        }
+        #game-container {
+            position: relative;
+            border: 3px solid #0f3460;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(0, 150, 255, 0.3);
+        }
+        canvas {
+            display: block;
+            background: #1a2a3a;
+        }
+        #ui-overlay {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.6);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            pointer-events: none;
+            user-select: none;
+        }
+        #controls-hint {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.6);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #aaa;
+            pointer-events: none;
+            user-select: none;
+        }
+    </style>
 </head>
 <body>
-    <div id="game-container">
-        <div id="header">
-            <h1>🗡️ Текстовый квест</h1>
-        </div>
-        <div id="output">
-            <div id="room-description"></div>
-            <div id="game-messages"></div>
-        </div>
-        <div id="input-area">
-            <input type="text" id="command-input" placeholder="Введите команду..." autofocus>
-            <button id="send-btn">➤</button>
-        </div>
-        <div id="status">
-            <span id="inventory-display">🎒 Инвентарь: пусто</span>
-        </div>
-    </div>
-    <script src="game.js"></script>
+<div id="game-container">
+    <canvas id="gameCanvas"></canvas>
+    <div id="ui-overlay">🗲 Доктор Кто: Измерения</div>
+    <div id="controls-hint">↑↓←→ / WASD — движение | E — взаимодействие</div>
+</div>
+<script src="game.js"></script>
 </body>
-</html> 
+</html>
