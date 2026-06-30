@@ -1,0 +1,138 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier New', monospace;
+    background: #1a1a2e;
+    color: #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+#game-container {
+    background: #16213e;
+    border-radius: 12px;
+    padding: 20px;
+    width: 90%;
+    max-width: 700px;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 30px rgba(0, 150, 255, 0.2);
+    border: 1px solid #0f3460;
+}
+
+#header h1 {
+    text-align: center;
+    color: #e94560;
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    text-shadow: 0 0 20px rgba(233, 69, 96, 0.3);
+}
+
+#output {
+    flex: 1;
+    overflow-y: auto;
+    background: #0f3460;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid #1a1a2e;
+    line-height: 1.6;
+}
+
+#output::-webkit-scrollbar {
+    width: 8px;
+}
+
+#output::-webkit-scrollbar-track {
+    background: #16213e;
+}
+
+#output::-webkit-scrollbar-thumb {
+    background: #e94560;
+    border-radius: 4px;
+}
+
+#room-description {
+    color: #a8d8ea;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #0f3460;
+}
+
+#game-messages {
+    color: #d4d4d4;
+    white-space: pre-wrap;
+}
+
+#input-area {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+#command-input {
+    flex: 1;
+    padding: 12px 15px;
+    border: 2px solid #0f3460;
+    border-radius: 8px;
+    background: #0f3460;
+    color: #e0e0e0;
+    font-size: 1rem;
+    font-family: 'Courier New', monospace;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+#command-input:focus {
+    border-color: #e94560;
+}
+
+#send-btn {
+    padding: 12px 20px;
+    background: #e94560;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.1s;
+}
+
+#send-btn:hover {
+    background: #c73652;
+}
+
+#send-btn:active {
+    transform: scale(0.95);
+}
+
+#status {
+    padding: 10px;
+    background: #0f3460;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #a8d8ea;
+}
+
+.highlight {
+    color: #f5c842;
+    font-weight: bold;
+}
+
+.error {
+    color: #e94560;
+}
+
+.success {
+    color: #4ecca3;
+} 
