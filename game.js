@@ -120,6 +120,7 @@ let dialogText = '';
 let joystickActive = false;
 let joystickDir = { x: 0, y: 0 };
 
+// Храним нажатые клавиши по их физическому коду (e.code)
 let keys = {};
 
 function getMap() { return maps[currentMap]; }
@@ -239,22 +240,30 @@ function interact() {
     setTimeout(() => { dialogActive = false; dialogText = ''; }, 1500);
 }
 
+// Обработчики клавиатуры с использованием e.code (физическое положение клавиши)
 document.addEventListener('keydown', (e) => {
-    // Отключаем прокрутку и стандартное поведение для клавиш управления
-    if (e.key === 'w' || e.key === 'W' || e.key === 'a' || e.key === 'A' ||
-        e.key === 's' || e.key === 'S' || e.key === 'd' || e.key === 'D' ||
-        e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' ||
-        e.key === 'e' || e.key === 'E') {
+    // Отключаем прокрутку и стандартное поведение для нужных клавиш
+    const code = e.code;
+    if (code === 'KeyW' || code === 'KeyA' || code === 'KeyS' || code === 'KeyD' ||
+        code === 'ArrowUp' || code === 'ArrowDown' || code === 'ArrowLeft' || code === 'ArrowRight' ||
+        code === 'KeyE') {
         e.preventDefault();
     }
-    keys[e.key] = true;
-    console.log('Key pressed:', e.key); // для отладки
-    if (e.key === 'e' || e.key === 'E') {
+    keys[code] = true;
+    // Для отладки (можно удалить)
+    // console.log('Key code:', code);
+    if (code === 'KeyE') {
         interact();
     }
 });
 document.addEventListener('keyup', (e) => {
-    keys[e.key] = false;
+    const code = e.code;
+    if (code === 'KeyW' || code === 'KeyA' || code === 'KeyS' || code === 'KeyD' ||
+        code === 'ArrowUp' || code === 'ArrowDown' || code === 'ArrowLeft' || code === 'ArrowRight' ||
+        code === 'KeyE') {
+        e.preventDefault();
+    }
+    keys[code] = false;
 });
 
 function handleJoystickStart(e) {
@@ -304,10 +313,11 @@ actionBtn.addEventListener('click', interact);
 
 function updatePlayer() {
     let dx = 0, dy = 0;
-    if (keys['ArrowUp'] || keys['w'] || keys['W']) dy = -player.speed;
-    if (keys['ArrowDown'] || keys['s'] || keys['S']) dy = player.speed;
-    if (keys['ArrowLeft'] || keys['a'] || keys['A']) dx = -player.speed;
-    if (keys['ArrowRight'] || keys['d'] || keys['D']) dx = player.speed;
+    // Используем физические коды клавиш
+    if (keys['ArrowUp'] || keys['KeyW']) dy = -player.speed;
+    if (keys['ArrowDown'] || keys['KeyS']) dy = player.speed;
+    if (keys['ArrowLeft'] || keys['KeyA']) dx = -player.speed;
+    if (keys['ArrowRight'] || keys['KeyD']) dx = player.speed;
 
     if (joystickActive) {
         const joyX = joystickDir.x * player.speed;
