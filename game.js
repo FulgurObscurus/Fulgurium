@@ -1,4 +1,4 @@
-﻿// game.js — ULTRA HD PIXEL ART
+﻿// game.js — улучшенная графика с чёткими персонажами
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -41,377 +41,331 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-// ---------- МЕГА-ПАЛИТРА (30+ цветов) ----------
-const C = {
-    // Синие
-    B0: '#0a2a4a', B1: '#1a4a7a', B2: '#2a6a9a', B3: '#4a8aba', B4: '#6aaada',
-    // Коричневые
-    M0: '#4a3a2a', M1: '#6a5a3a', M2: '#8a7a5a', M3: '#aa9a7a', M4: '#caba9a',
-    // Серые
-    G0: '#333333', G1: '#555555', G2: '#777777', G3: '#999999', G4: '#bbbbbb',
-    // Телесные
-    S0: '#d4b89a', S1: '#e8c9a0', S2: '#f5d6b8', S3: '#fae6d0',
-    // Красные
-    R0: '#661122', R1: '#aa2233', R2: '#cc4455', R3: '#ee6677',
-    // Жёлтые/оранжевые
-    O0: '#885522', O1: '#bb7733', O2: '#ddaa55', O3: '#ffcc77',
-    // Зелёные
-    N0: '#2a4a1a', N1: '#3a6a2a', N2: '#5a8a4a',
-    // Другие
-    W: '#ffffff', K: '#111111', X: '#000000',
-    P: '#8844aa', C0: '#44aacc', Y: '#ffdd00',
-    T: '#665544', Z: '#aaccee', E: '#dddddd',
-    F: '#ffaa77', U: '#5a4a3a', V: '#7799aa',
-    H: '#e8c9a0', D: '#0a2a4a',
-};
+// ---------- РИСОВАНИЕ ПЕРСОНАЖЕЙ ----------
+// Все персонажи рисуются в масштабе 1:1 внутри квадрата 40x40 пикселей.
+// При отрисовке они масштабируются под размер тайла.
 
-// ---------- ГИГАНТСКИЕ СПРАЙТЫ (48x64 для персонажей) ----------
-// Игрок - парень в синей куртке с рюкзаком, светлые волосы, джинсы
-const SPRITE_PLAYER = [
-    '            O1O1O1                ',
-    '           O2O2O2O2               ',
-    '          O3O3O3O3O3              ',
-    '         O3O3O3O3O3O3             ',
-    '        O3O3K0K0O3O3O3            ',
-    '       O3O3K0K0O3O3O3O3           ',
-    '      O3O3K0S2S2K0O3O3O3          ',
-    '     O3O3K0S2S2K0O3O3O3O3         ',
-    '    O3O3B2B2B2B2O3O3O3O3          ',
-    '   O3O3B2B2B2B2O3O3O3O3O3         ',
-    '  O3O3B2B2B2B2O3O3O3O3O3          ',
-    ' O3O3B2B2B2B2O3O3O3O3O3           ',
-    'O3O3B2B2B2B2O3O3O3O3O3            ',
-    ' O3B2B2B2B2O3O3O3O3O3             ',
-    '  O3B2B2B2B2O3O3O3O3              ',
-    '   O3B2B2B2B2O3O3O3               ',
-    '    O3B2B2B2B2O3O3                ',
-    '     O3B2B2B2B2O3                 ',
-    '      O3B2B2B2B2                  ',
-    '       O3B2B2B2                   ',
-    '        O3B2B2                    ',
-    '         O3B2                     ',
-    '          O3                      ',
-    '         O3B2                     ',
-    '        O3B2B2                    ',
-    '       O3B2B2B2                   ',
-    '      O3B2B2B2B2                  ',
-    '     O3B2B2B2B2O3                 ',
-    '    O3B2B2B2B2O3O3                ',
-    '   O3B2B2B2B2O3O3O3               ',
-    '  O3B2B2B2B2O3O3O3O3              ',
-    ' O3B2B2B2B2O3O3O3O3O3             ',
-    'O3B2B2B2B2O3O3O3O3O3              ',
-    ' O3B2B2B2B2O3O3O3O3               ',
-    '  O3B2B2B2B2O3O3O3                ',
-    '   O3B2B2B2B2O3O3                 ',
-    '    O3B2B2B2B2O3                  ',
-    '     O3B2B2B2B2                   ',
-    '      O3B2B2B2                    ',
-    '       O3B2B2                     ',
-    '        O3B2                      ',
-    '         O3                       ',
-    '        O3B2                      ',
-    '       O3B2B2                     ',
-    '      O3B2B2B2                    ',
-    '     O3B2B2B2B2                   ',
-    '    O3B2B2B2B2O3                  ',
-    '   O3B2B2B2B2O3O3                 ',
-    '  O3B2B2B2B2O3O3O3                ',
-    ' O3B2B2B2B2O3O3O3O3               ',
-    'O3B2B2B2B2O3O3O3O3O3              ',
-    ' O3B2B2B2B2O3O3O3O3               ',
-    '  O3B2B2B2B2O3O3O3                ',
-    '   O3B2B2B2B2O3O3                 ',
-    '    O3B2B2B2B2O3                  ',
-    '     O3B2B2B2B2                   ',
-    '      O3B2B2B2                    ',
-    '       O3B2B2                     ',
-    '        O3B2                      ',
-    '         O3                       ',
-    '        O3B2                      ',
-    '       O3B2B2                     ',
-    '      O3B2B2B2                    ',
-    '     O3B2B2B2B2                   ',
-    '    O3B2B2B2B2O3                  ',
-];
-
-// Доктор - в коричневом пальто, галстук-бабочка, седые волосы, очки
-const SPRITE_DOCTOR = [
-    '            M1M1M1                ',
-    '           M2M2M2M2               ',
-    '          M3M3M3M3M3              ',
-    '         M3M3K0K0M3M3             ',
-    '        M3M3K0K0M3M3M3            ',
-    '       M3M3K0S2S2K0M3M3           ',
-    '      M3M3K0S2S2K0M3M3M3          ',
-    '     M3M3R1R1R1R1M3M3M3           ',
-    '    M3M3R1R1R1R1M3M3M3            ',
-    '   M3M3R1R1R1R1M3M3M3             ',
-    '  M3M3R1R1R1R1M3M3M3              ',
-    ' M3M3R1R1R1R1M3M3M3               ',
-    'M3M3R1R1R1R1M3M3M3                ',
-    ' M3R1R1R1R1M3M3M3                 ',
-    '  M3R1R1R1R1M3M3                  ',
-    '   M3R1R1R1R1M3                   ',
-    '    M3R1R1R1R1                    ',
-    '     M3R1R1R1                     ',
-    '      M3R1R1                      ',
-    '       M3R1                       ',
-    '        M3                        ',
-    '       M3R1                       ',
-    '      M3R1R1                      ',
-    '     M3R1R1R1                     ',
-    '    M3R1R1R1R1                    ',
-    '   M3R1R1R1R1M3                   ',
-    '  M3R1R1R1R1M3M3                  ',
-    ' M3R1R1R1R1M3M3M3                 ',
-    'M3R1R1R1R1M3M3M3                  ',
-    ' M3R1R1R1R1M3M3M3                 ',
-    '  M3R1R1R1R1M3M3                  ',
-    '   M3R1R1R1R1M3                   ',
-    '    M3R1R1R1R1                    ',
-    '     M3R1R1R1                     ',
-    '      M3R1R1                      ',
-    '       M3R1                       ',
-    '        M3                        ',
-    '       M3R1                       ',
-    '      M3R1R1                      ',
-    '     M3R1R1R1                     ',
-    '    M3R1R1R1R1                    ',
-    '   M3R1R1R1R1M3                   ',
-    '  M3R1R1R1R1M3M3                  ',
-    ' M3R1R1R1R1M3M3M3                 ',
-    'M3R1R1R1R1M3M3M3                  ',
-    ' M3R1R1R1R1M3M3M3                 ',
-    '  M3R1R1R1R1M3M3                  ',
-    '   M3R1R1R1R1M3                   ',
-    '    M3R1R1R1R1                    ',
-    '     M3R1R1R1                     ',
-    '      M3R1R1                      ',
-    '       M3R1                       ',
-    '        M3                        ',
-    '       M3R1                       ',
-    '      M3R1R1                      ',
-    '     M3R1R1R1                     ',
-    '    M3R1R1R1R1                    ',
-    '   M3R1R1R1R1M3                   ',
-    '  M3R1R1R1R1M3M3                  ',
-    ' M3R1R1R1R1M3M3M3                 ',
-    'M3R1R1R1R1M3M3M3                  ',
-    ' M3R1R1R1R1M3M3M3                 ',
-    '  M3R1R1R1R1M3M3                  ',
-    '   M3R1R1R1R1M3                   ',
-    '    M3R1R1R1R1                    ',
-    '     M3R1R1R1                     ',
-    '      M3R1R1                      ',
-    '       M3R1                       ',
-    '        M3                        ',
-];
-
-// Далёк - большой серый баклажан с синим глазом
-const SPRITE_DALEK = [
-    '          G2G2G2                  ',
-    '         G3G3G3G3                 ',
-    '        G3G3G3G3G3                ',
-    '       G3G3B2B2G3G3               ',
-    '      G3G3B2B2G3G3G3              ',
-    '     G3G3B2B2G3G3G3G3             ',
-    '    G3G3B2B2G3G3G3G3G3            ',
-    '   G3G3B2B2G3G3G3G3G3             ',
-    '  G3G3B2B2G3G3G3G3G3              ',
-    ' G3G3B2B2G3G3G3G3G3               ',
-    'G3G3B2B2G3G3G3G3G3                ',
-    ' G3B2B2G3G3G3G3G3                 ',
-    '  G3B2B2G3G3G3G3                  ',
-    '   G3B2B2G3G3G3                   ',
-    '    G3B2B2G3G3                    ',
-    '     G3B2B2G3                     ',
-    '      G3B2B2                      ',
-    '       G3B2                       ',
-    '        G3                        ',
-    '       G3B2                       ',
-    '      G3B2B2                      ',
-    '     G3B2B2G3                     ',
-    '    G3B2B2G3G3                    ',
-    '   G3B2B2G3G3G3                   ',
-    '  G3B2B2G3G3G3G3                  ',
-    ' G3B2B2G3G3G3G3G3                 ',
-    'G3B2B2G3G3G3G3G3                  ',
-    ' G3B2B2G3G3G3G3G3                 ',
-    '  G3B2B2G3G3G3G3G3                ',
-    '   G3B2B2G3G3G3G3G3               ',
-    '    G3B2B2G3G3G3G3G3              ',
-    '     G3B2B2G3G3G3G3G3             ',
-    '      G3B2B2G3G3G3G3G3            ',
-    '       G3B2B2G3G3G3G3G3           ',
-    '        G3B2B2G3G3G3G3G3          ',
-    '         G3B2B2G3G3G3G3G3         ',
-    '          G3B2B2G3G3G3G3G3        ',
-    '           G3B2B2G3G3G3G3G3       ',
-    '            G3B2B2G3G3G3G3G3      ',
-    '             G3B2B2G3G3G3G3G3     ',
-    '              G3B2B2G3G3G3G3G3    ',
-    '               G3B2B2G3G3G3G3G3   ',
-    '                G3B2B2G3G3G3G3G3  ',
-    '                 G3B2B2G3G3G3G3G3 ',
-    '                  G3B2B2G3G3G3G3G3',
-];
-
-// ТАРДИС - синяя будка с окнами и фонарём
-const SPRITE_TARDIS = [
-    '          B2B2B2                 ',
-    '         B3B3B3B3                ',
-    '        B3B3B3B3B3               ',
-    '       B3B3Z0Z0B3B3              ',
-    '      B3B3Z0Z0B3B3B3             ',
-    '     B3B3Z0Z0B3B3B3B3            ',
-    '    B3B3Z0Z0B3B3B3B3B3           ',
-    '   B3B3Z0Z0B3B3B3B3B3B3          ',
-    '  B3B3Z0Z0B3B3B3B3B3B3           ',
-    ' B3B3Z0Z0B3B3B3B3B3B3            ',
-    'B3B3Z0Z0B3B3B3B3B3B3             ',
-    ' B3Z0Z0B3B3B3B3B3B3              ',
-    '  B3Z0Z0B3B3B3B3B3               ',
-    '   B3Z0Z0B3B3B3B3                ',
-    '    B3Z0Z0B3B3B3                 ',
-    '     B3Z0Z0B3B3                  ',
-    '      B3Z0Z0B3                   ',
-    '       B3Z0Z0                    ',
-    '        B3Z0                     ',
-    '         B3                      ',
-    '        B3Z0                     ',
-    '       B3Z0Z0                    ',
-    '      B3Z0Z0B3                   ',
-    '     B3Z0Z0B3B3                  ',
-    '    B3Z0Z0B3B3B3                 ',
-    '   B3Z0Z0B3B3B3B3                ',
-    '  B3Z0Z0B3B3B3B3B3               ',
-    ' B3Z0Z0B3B3B3B3B3B3              ',
-    'B3Z0Z0B3B3B3B3B3B3               ',
-    ' B3Z0Z0B3B3B3B3B3B3              ',
-    '  B3Z0Z0B3B3B3B3B3B3             ',
-    '   B3Z0Z0B3B3B3B3B3B3            ',
-    '    B3Z0Z0B3B3B3B3B3B3           ',
-    '     B3Z0Z0B3B3B3B3B3B3          ',
-    '      B3Z0Z0B3B3B3B3B3B3         ',
-    '       B3Z0Z0B3B3B3B3B3B3        ',
-    '        B3Z0Z0B3B3B3B3B3B3       ',
-    '         B3Z0Z0B3B3B3B3B3B3      ',
-    '          B3Z0Z0B3B3B3B3B3B3     ',
-    '           B3Z0Z0B3B3B3B3B3B3    ',
-    '            B3Z0Z0B3B3B3B3B3B3   ',
-    '             B3Z0Z0B3B3B3B3B3B3  ',
-    '              B3Z0Z0B3B3B3B3B3B3 ',
-    '               B3Z0Z0B3B3B3B3B3B3',
-];
-
-// Звуковая отвёртка (серебристая с синим свечением)
-const SPRITE_SONIC = [
-    '          C0C0                   ',
-    '         C0C0C0                  ',
-    '        C0C0C0C0                 ',
-    '       C0G3G3C0                  ',
-    '      C0G3G3G3C0                 ',
-    '     C0G3G3G3G3C0                ',
-    '    C0G3G3G3G3G3C0               ',
-    '   C0G3G3G3G3G3G3C0              ',
-    '  C0G3G3G3G3G3G3G3C0             ',
-    ' C0G3G3G3G3G3G3G3G3C0            ',
-    'C0G3G3G3G3G3G3G3G3G3C0           ',
-    ' C0G3G3G3G3G3G3G3G3C0            ',
-    '  C0G3G3G3G3G3G3G3C0             ',
-    '   C0G3G3G3G3G3G3C0              ',
-    '    C0G3G3G3G3G3C0               ',
-    '     C0G3G3G3G3C0                ',
-    '      C0G3G3G3C0                 ',
-    '       C0G3G3C0                  ',
-    '        C0G3C0                   ',
-    '         C0C0                    ',
-];
-
-// ---------- ТЕНИ (полупрозрачные эллипсы) ----------
-function drawShadow(x, y, scale) {
+function drawPlayer(x, y, scale) {
+    const s = scale * 1.2; // делаем крупнее
+    // Тень
     ctx.save();
-    ctx.shadowColor = 'rgba(0,0,0,0.0)';
-    ctx.shadowBlur = 0;
-    const w = 24 * scale;
-    const h = 10 * scale;
-    ctx.globalAlpha = 0.4;
-    ctx.fillStyle = '#111111';
+    ctx.shadowColor = 'rgba(0,0,0,0.3)';
+    ctx.shadowBlur = 8;
     ctx.beginPath();
-    ctx.ellipse(x, y + 24 * scale, w, h, 0, 0, Math.PI * 2);
+    ctx.ellipse(x, y + 20*s, 18*s, 6*s, 0, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(0,0,0,0.25)';
     ctx.fill();
-    ctx.globalAlpha = 1.0;
     ctx.restore();
+
+    // Голова (светлый круг)
+    ctx.fillStyle = '#f7d9aa';
+    ctx.beginPath();
+    ctx.arc(x, y - 16*s, 10*s, 0, Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle = '#222';
+    ctx.lineWidth = 1.5*s;
+    ctx.stroke();
+
+    // Волосы (оранжевые)
+    ctx.fillStyle = '#ddaa55';
+    ctx.beginPath();
+    ctx.arc(x, y - 18*s, 10*s, -Math.PI, 0);
+    ctx.fill();
+
+    // Глаза
+    ctx.fillStyle = '#222';
+    ctx.beginPath();
+    ctx.arc(x - 5*s, y - 18*s, 2*s, 0, Math.PI*2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(x + 5*s, y - 18*s, 2*s, 0, Math.PI*2);
+    ctx.fill();
+
+    // Тело (синяя куртка)
+    ctx.fillStyle = '#2a6a9a';
+    ctx.fillRect(x - 12*s, y - 6*s, 24*s, 16*s);
+    ctx.strokeStyle = '#1a4a7a';
+    ctx.lineWidth = 1.5*s;
+    ctx.strokeRect(x - 12*s, y - 6*s, 24*s, 16*s);
+
+    // Руки (синие)
+    ctx.fillStyle = '#2a6a9a';
+    ctx.fillRect(x - 18*s, y - 4*s, 6*s, 14*s);
+    ctx.fillRect(x + 12*s, y - 4*s, 6*s, 14*s);
+    ctx.strokeStyle = '#1a4a7a';
+    ctx.lineWidth = 1.5*s;
+    ctx.strokeRect(x - 18*s, y - 4*s, 6*s, 14*s);
+    ctx.strokeRect(x + 12*s, y - 4*s, 6*s, 14*s);
+
+    // Ноги (джинсы)
+    ctx.fillStyle = '#3a6a8a';
+    ctx.fillRect(x - 10*s, y + 10*s, 8*s, 12*s);
+    ctx.fillRect(x + 2*s, y + 10*s, 8*s, 12*s);
+    ctx.strokeStyle = '#1a4a7a';
+    ctx.lineWidth = 1.5*s;
+    ctx.strokeRect(x - 10*s, y + 10*s, 8*s, 12*s);
+    ctx.strokeRect(x + 2*s, y + 10*s, 8*s, 12*s);
+
+    // Обувь (тёмная)
+    ctx.fillStyle = '#333';
+    ctx.fillRect(x - 11*s, y + 22*s, 10*s, 4*s);
+    ctx.fillRect(x + 1*s, y + 22*s, 10*s, 4*s);
 }
 
-// ---------- ОТРИСОВКА СПРАЙТА С МАСШТАБИРОВАНИЕМ ----------
-function drawSprite(sprite, x, y, scale = 1) {
-    if (!sprite) return;
-    const rows = sprite.length;
-    const cols = sprite[0].length;
-    // Делаем пиксели крупными, чтобы спрайт занимал почти весь тайл и даже больше
-    const baseSize = 50 / Math.max(rows, cols) * 1.3;
-    const pixelSize = baseSize * scale;
-    const offsetX = - (cols * pixelSize) / 2;
-    const offsetY = - (rows * pixelSize) / 2;
-    for (let row = 0; row < rows; row++) {
-        for (let col = 0; col < cols; col++) {
-            const ch = sprite[row][col];
-            // Обработка составных цветов (например, B2, G3)
-            let color = null;
-            if (ch === ' ') continue;
-            if (ch.length === 2) {
-                const base = ch[0];
-                const num = parseInt(ch[1]);
-                if (base === 'B') color = [C.B0, C.B1, C.B2, C.B3, C.B4][num] || C.B0;
-                else if (base === 'M') color = [C.M0, C.M1, C.M2, C.M3, C.M4][num] || C.M0;
-                else if (base === 'G') color = [C.G0, C.G1, C.G2, C.G3, C.G4][num] || C.G0;
-                else if (base === 'S') color = [C.S0, C.S1, C.S2, C.S3][num] || C.S0;
-                else if (base === 'R') color = [C.R0, C.R1, C.R2, C.R3][num] || C.R0;
-                else if (base === 'O') color = [C.O0, C.O1, C.O2, C.O3][num] || C.O0;
-                else if (base === 'N') color = [C.N0, C.N1, C.N2][num] || C.N0;
-                else if (base === 'Z') color = C.Z;
-                else if (base === 'K') color = C.K;
-                else if (base === 'W') color = C.W;
-                else if (base === 'X') color = C.X;
-                else if (base === 'P') color = C.P;
-                else if (base === 'C' && num === 0) color = C.C0;
-                else if (base === 'Y') color = C.Y;
-                else if (base === 'T') color = C.T;
-                else if (base === 'E') color = C.E;
-                else if (base === 'F') color = C.F;
-                else if (base === 'U') color = C.U;
-                else if (base === 'V') color = C.V;
-                else if (base === 'H') color = C.H;
-                else if (base === 'D') color = C.D;
-                else color = C.W;
-            } else {
-                // Одиночные символы (K, W, X и т.д.)
-                if (ch === 'K') color = C.K;
-                else if (ch === 'W') color = C.W;
-                else if (ch === 'X') color = C.X;
-                else if (ch === 'P') color = C.P;
-                else if (ch === 'Y') color = C.Y;
-                else if (ch === 'Z') color = C.Z;
-                else if (ch === 'E') color = C.E;
-                else if (ch === 'F') color = C.F;
-                else if (ch === 'U') color = C.U;
-                else if (ch === 'V') color = C.V;
-                else if (ch === 'H') color = C.H;
-                else if (ch === 'D') color = C.D;
-                else if (ch === 'T') color = C.T;
-                else if (ch === 'C') color = C.C0;
-                else color = C.W;
-            }
-            if (color) {
-                ctx.fillStyle = color;
-                const px = x + offsetX + col * pixelSize;
-                const py = y + offsetY + row * pixelSize;
-                ctx.fillRect(px, py, pixelSize, pixelSize);
-            }
-        }
-    }
+function drawDoctor(x, y, scale) {
+    const s = scale * 1.2;
+    // Тень
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.3)';
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.ellipse(x, y + 20*s, 18*s, 6*s, 0, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(0,0,0,0.25)';
+    ctx.fill();
+    ctx.restore();
+
+    // Голова
+    ctx.fillStyle = '#f7d9aa';
+    ctx.beginPath();
+    ctx.arc(x, y - 16*s, 10*s, 0, Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle = '#222';
+    ctx.lineWidth = 1.5*s;
+    ctx.stroke();
+
+    // Седые волосы
+    ctx.fillStyle = '#cccccc';
+    ctx.beginPath();
+    ctx.arc(x, y - 18*s, 10*s, -Math.PI, 0);
+    ctx.fill();
+
+    // Очки (два круга)
+    ctx.strokeStyle = '#555';
+    ctx.lineWidth = 1.5*s;
+    ctx.beginPath();
+    ctx.arc(x - 5*s, y - 17*s, 4*s, 0, Math.PI*2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(x + 5*s, y - 17*s, 4*s, 0, Math.PI*2);
+    ctx.stroke();
+    // дужка
+    ctx.beginPath();
+    ctx.moveTo(x - 9*s, y - 17*s);
+    ctx.lineTo(x - 13*s, y - 19*s);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x + 9*s, y - 17*s);
+    ctx.lineTo(x + 13*s, y - 19*s);
+    ctx.stroke();
+
+    // Глаза (под очками)
+    ctx.fillStyle = '#222';
+    ctx.beginPath();
+    ctx.arc(x - 5*s, y - 17*s, 1.5*s, 0, Math.PI*2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(x + 5*s, y - 17*s, 1.5*s, 0, Math.PI*2);
+    ctx.fill();
+
+    // Тело (коричневое пальто)
+    ctx.fillStyle = '#8b6a4a';
+    ctx.fillRect(x - 14*s, y - 6*s, 28*s, 18*s);
+    ctx.strokeStyle = '#5a4a3a';
+    ctx.lineWidth = 1.5*s;
+    ctx.strokeRect(x - 14*s, y - 6*s, 28*s, 18*s);
+
+    // Галстук-бабочка (красный)
+    ctx.fillStyle = '#cc3333';
+    ctx.fillRect(x - 5*s, y - 6*s, 10*s, 4*s);
+    ctx.fillRect(x - 7*s, y - 4*s, 14*s, 3*s);
+
+    // Руки (коричневые)
+    ctx.fillStyle = '#8b6a4a';
+    ctx.fillRect(x - 20*s, y - 4*s, 6*s, 14*s);
+    ctx.fillRect(x + 14*s, y - 4*s, 6*s, 14*s);
+    ctx.strokeStyle = '#5a4a3a';
+    ctx.lineWidth = 1.5*s;
+    ctx.strokeRect(x - 20*s, y - 4*s, 6*s, 14*s);
+    ctx.strokeRect(x + 14*s, y - 4*s, 6*s, 14*s);
+
+    // Трость (в правой руке)
+    ctx.strokeStyle = '#8a7a6a';
+    ctx.lineWidth = 2*s;
+    ctx.beginPath();
+    ctx.moveTo(x + 18*s, y - 2*s);
+    ctx.lineTo(x + 24*s, y + 20*s);
+    ctx.stroke();
+
+    // Ноги (тёмные брюки)
+    ctx.fillStyle = '#4a4a4a';
+    ctx.fillRect(x - 10*s, y + 12*s, 8*s, 12*s);
+    ctx.fillRect(x + 2*s, y + 12*s, 8*s, 12*s);
+    ctx.strokeStyle = '#222';
+    ctx.lineWidth = 1.5*s;
+    ctx.strokeRect(x - 10*s, y + 12*s, 8*s, 12*s);
+    ctx.strokeRect(x + 2*s, y + 12*s, 8*s, 12*s);
+}
+
+function drawDalek(x, y, scale) {
+    const s = scale * 1.2;
+    // Тень
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.3)';
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.ellipse(x, y + 20*s, 16*s, 6*s, 0, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(0,0,0,0.25)';
+    ctx.fill();
+    ctx.restore();
+
+    // Корпус (серый баклажан)
+    ctx.fillStyle = '#999999';
+    ctx.beginPath();
+    ctx.moveTo(x - 14*s, y + 4*s);
+    ctx.quadraticCurveTo(x - 18*s, y - 10*s, x - 10*s, y - 18*s);
+    ctx.quadraticCurveTo(x, y - 24*s, x + 10*s, y - 18*s);
+    ctx.quadraticCurveTo(x + 18*s, y - 10*s, x + 14*s, y + 4*s);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = '#555';
+    ctx.lineWidth = 1.5*s;
+    ctx.stroke();
+
+    // Антенна (сверху)
+    ctx.strokeStyle = '#777';
+    ctx.lineWidth = 2*s;
+    ctx.beginPath();
+    ctx.moveTo(x, y - 22*s);
+    ctx.lineTo(x, y - 30*s);
+    ctx.stroke();
+    ctx.fillStyle = '#ff4444';
+    ctx.beginPath();
+    ctx.arc(x, y - 30*s, 3*s, 0, Math.PI*2);
+    ctx.fill();
+
+    // Глаз (синий)
+    ctx.fillStyle = '#44aacc';
+    ctx.beginPath();
+    ctx.arc(x, y - 14*s, 6*s, 0, Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle = '#222';
+    ctx.lineWidth = 1.5*s;
+    ctx.stroke();
+
+    // Огни (кнопки)
+    ctx.fillStyle = '#44aacc';
+    ctx.beginPath();
+    ctx.arc(x - 8*s, y - 4*s, 3*s, 0, Math.PI*2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(x + 8*s, y - 4*s, 3*s, 0, Math.PI*2);
+    ctx.fill();
+
+    // Нижняя часть (юбка)
+    ctx.fillStyle = '#888';
+    ctx.beginPath();
+    ctx.moveTo(x - 16*s, y + 4*s);
+    ctx.lineTo(x - 18*s, y + 10*s);
+    ctx.lineTo(x + 18*s, y + 10*s);
+    ctx.lineTo(x + 16*s, y + 4*s);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = '#555';
+    ctx.lineWidth = 1.5*s;
+    ctx.stroke();
+
+    // Шарики (ноги)
+    ctx.fillStyle = '#777';
+    ctx.beginPath();
+    ctx.arc(x - 8*s, y + 12*s, 5*s, 0, Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle = '#555';
+    ctx.lineWidth = 1.5*s;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(x + 8*s, y + 12*s, 5*s, 0, Math.PI*2);
+    ctx.fill();
+    ctx.stroke();
+}
+
+function drawTardis(x, y, scale) {
+    const s = scale * 1.2;
+    // Тень
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.3)';
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.ellipse(x, y + 18*s, 18*s, 6*s, 0, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(0,0,0,0.25)';
+    ctx.fill();
+    ctx.restore();
+
+    // Корпус (синий)
+    ctx.fillStyle = '#1a4a7a';
+    ctx.fillRect(x - 16*s, y - 20*s, 32*s, 32*s);
+    ctx.strokeStyle = '#0a2a4a';
+    ctx.lineWidth = 2*s;
+    ctx.strokeRect(x - 16*s, y - 20*s, 32*s, 32*s);
+
+    // Окна (белые)
+    ctx.fillStyle = '#aaccee';
+    ctx.fillRect(x - 12*s, y - 14*s, 8*s, 10*s);
+    ctx.fillRect(x + 4*s, y - 14*s, 8*s, 10*s);
+    ctx.fillRect(x - 12*s, y + 2*s, 8*s, 10*s);
+    ctx.fillRect(x + 4*s, y + 2*s, 8*s, 10*s);
+
+    // Рамы окон (тёмно-синие)
+    ctx.strokeStyle = '#0a2a4a';
+    ctx.lineWidth = 1.5*s;
+    ctx.strokeRect(x - 12*s, y - 14*s, 8*s, 10*s);
+    ctx.strokeRect(x + 4*s, y - 14*s, 8*s, 10*s);
+    ctx.strokeRect(x - 12*s, y + 2*s, 8*s, 10*s);
+    ctx.strokeRect(x + 4*s, y + 2*s, 8*s, 10*s);
+
+    // Крыша (тёмно-синяя)
+    ctx.fillStyle = '#0a2a4a';
+    ctx.fillRect(x - 18*s, y - 24*s, 36*s, 6*s);
+    // Фонарь
+    ctx.fillStyle = '#44aacc';
+    ctx.beginPath();
+    ctx.arc(x, y - 26*s, 4*s, 0, Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle = '#222';
+    ctx.lineWidth = 1.5*s;
+    ctx.stroke();
+}
+
+function drawSonic(x, y, scale) {
+    const s = scale * 1.2;
+    // Свечение
+    ctx.save();
+    ctx.shadowColor = 'rgba(68, 170, 204, 0.6)';
+    ctx.shadowBlur = 20;
+    ctx.fillStyle = '#44aacc';
+    ctx.beginPath();
+    ctx.arc(x, y, 8*s, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+
+    // Стержень (серебристый)
+    ctx.fillStyle = '#cccccc';
+    ctx.fillRect(x - 2*s, y - 14*s, 4*s, 28*s);
+    ctx.strokeStyle = '#888';
+    ctx.lineWidth = 1.5*s;
+    ctx.strokeRect(x - 2*s, y - 14*s, 4*s, 28*s);
+
+    // Наконечник (синий)
+    ctx.fillStyle = '#44aacc';
+    ctx.beginPath();
+    ctx.arc(x, y - 14*s, 4*s, 0, Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle = '#2a6a9a';
+    ctx.lineWidth = 1.5*s;
+    ctx.stroke();
+
+    // Рукоятка (тёмная)
+    ctx.fillStyle = '#555';
+    ctx.fillRect(x - 4*s, y + 2*s, 8*s, 4*s);
 }
 
 // ---------- КАРТА (без изменений) ----------
@@ -441,10 +395,10 @@ const maps = {
             [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
         ],
         objects: {
-            tardis: { x: 10, y: 8, label: 'ТАРДИС', color: '#4a7db5' },
-            dalek:  { x: 18, y: 5, label: 'Далёк', color: '#b33a3a' },
-            doctor: { x: 6, y: 14, label: 'Доктор', color: '#f4c542' },
-            sonic:  { x: 14, y: 12, label: 'Звуковая отвёртка', color: '#aaa' }
+            tardis: { x: 10, y: 8, label: 'ТАРДИС', type: 'tardis' },
+            dalek:  { x: 18, y: 5, label: 'Далёк', type: 'dalek' },
+            doctor: { x: 6, y: 14, label: 'Доктор', type: 'doctor' },
+            sonic:  { x: 14, y: 12, label: 'Звуковая отвёртка', type: 'sonic' }
         }
     },
     gallifrey: {
@@ -472,8 +426,8 @@ const maps = {
             [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
         ],
         objects: {
-            tardis: { x: 12, y: 10, label: 'ТАРДИС (Галлифрей)', color: '#4a7db5' },
-            advisor: { x: 6, y: 8, label: 'Советник', color: '#8a6e3b' }
+            tardis: { x: 12, y: 10, label: 'ТАРДИС (Галлифрей)', type: 'tardis' },
+            advisor: { x: 6, y: 8, label: 'Советник', type: 'doctor' }
         }
     }
 };
@@ -774,48 +728,26 @@ function draw() {
 
     // Рисуем объекты
     const objects = map.objects;
-    const spriteScale = 1.2; // увеличенный масштаб
     for (let key in objects) {
         const obj = objects[key];
         const x = obj.x * TILE_SIZE + TILE_SIZE/2 - camera.x;
         const y = obj.y * TILE_SIZE + TILE_SIZE/2 - camera.y;
-        if (x < -60 || x > canvas.width/scale + 60 || y < -60 || y > canvas.height/scale + 60) continue;
+        if (x < -40 || x > canvas.width/scale + 40 || y < -40 || y > canvas.height/scale + 40) continue;
 
-        drawShadow(x, y, spriteScale);
-
-        let sprite = null;
-        if (key === 'tardis') sprite = SPRITE_TARDIS;
-        else if (key === 'doctor') sprite = SPRITE_DOCTOR;
-        else if (key === 'dalek') sprite = SPRITE_DALEK;
-        else if (key === 'sonic') sprite = SPRITE_SONIC;
-        else if (key === 'advisor') sprite = SPRITE_DOCTOR;
-
-        if (sprite) {
-            drawSprite(sprite, x, y, spriteScale);
-        } else {
-            // fallback
-            ctx.shadowColor = 'rgba(0,0,0,0.5)';
-            ctx.shadowBlur = 10;
-            ctx.fillStyle = obj.color || '#888';
-            ctx.beginPath();
-            ctx.arc(x, y, 16, 0, Math.PI*2);
-            ctx.fill();
-            ctx.shadowBlur = 0;
-            ctx.fillStyle = '#fff';
-            ctx.font = '12px monospace';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'bottom';
-            ctx.fillText(obj.label, x, y - 20);
+        const type = obj.type || key;
+        switch (type) {
+            case 'tardis': drawTardis(x, y, 1.0); break;
+            case 'dalek': drawDalek(x, y, 1.0); break;
+            case 'doctor': drawDoctor(x, y, 1.0); break;
+            case 'sonic': drawSonic(x, y, 1.0); break;
+            default: drawDoctor(x, y, 1.0); break;
         }
     }
 
-    // Игрок
-    const px = player.x - camera.x;
-    const py = player.y - camera.y;
-    drawShadow(px, py, 1.2);
-    drawSprite(SPRITE_PLAYER, px, py, 1.2);
+    // Рисуем игрока
+    drawPlayer(player.x - camera.x, player.y - camera.y, 1.0);
 
-    // Диалог
+    // Диалоговое окно
     if (dialogActive && dialogText) {
         ctx.fillStyle = 'rgba(0,0,0,0.8)';
         ctx.shadowBlur = 0;
