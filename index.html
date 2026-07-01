@@ -3,35 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Доктор Кто RPG</title>
+    <title>Доктор Кто RPG + Покемоны + MK</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
+        html, body {
+            width: 100%; height: 100%;
             background: #111;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            overflow: hidden;
             font-family: 'Courier New', monospace;
             color: #fff;
-            overflow: hidden;
             touch-action: none;
             user-select: none;
-            margin: 0;
-            padding: 0;
         }
         #game-container {
-            position: relative;
-            width: 100%;
-            max-width: 800px;
+            width: 100vw;
             height: 100vh;
             display: flex;
             flex-direction: column;
             background: #1a2a3a;
-            border: 3px solid #0f3460;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 0 40px rgba(0, 150, 255, 0.3);
         }
         #canvas-wrapper {
             flex: 1;
@@ -47,48 +36,21 @@
             background: #1a2a3a;
             touch-action: none;
         }
-        #ui-overlay {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(0,0,0,0.6);
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 14px;
-            pointer-events: none;
-            user-select: none;
-            z-index: 5;
-        }
-        #controls-hint {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.6);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            color: #aaa;
-            pointer-events: none;
-            user-select: none;
-            display: none;
-            z-index: 5;
-        }
         #touch-controls {
-            height: 160px;
-            min-height: 160px;
-            background: rgba(0,0,0,0.4);
+            height: 150px;
+            min-height: 150px;
+            background: rgba(0,0,0,0.5);
             border-top: 2px solid rgba(255,255,255,0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 30px;
+            padding: 10px 20px;
             touch-action: none;
             flex-shrink: 0;
         }
         #joystick-area {
-            width: 120px;
-            height: 120px;
+            width: 110px;
+            height: 110px;
             border-radius: 50%;
             background: rgba(255,255,255,0.1);
             border: 2px solid rgba(255,255,255,0.2);
@@ -97,8 +59,8 @@
             flex-shrink: 0;
         }
         #joystick-knob {
-            width: 50px;
-            height: 50px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             background: rgba(255,255,255,0.5);
             position: absolute;
@@ -115,7 +77,7 @@
             background: rgba(233, 69, 96, 0.8);
             border: 2px solid #e94560;
             color: #fff;
-            font-size: 24px;
+            font-size: 22px;
             font-weight: bold;
             display: flex;
             align-items: center;
@@ -123,47 +85,96 @@
             touch-action: none;
             box-shadow: 0 0 30px rgba(233,69,96,0.3);
             user-select: none;
-            text-shadow: 0 0 10px rgba(255,255,255,0.3);
             flex-shrink: 0;
         }
-        #action-button:active {
-            transform: scale(0.9);
-            background: rgba(233, 69, 96, 1);
-        }
-        @media (pointer: fine) {
-            #touch-controls {
-                opacity: 0.3;
-                height: 100px;
-                min-height: 100px;
-            }
-            #controls-hint {
-                display: block;
-            }
-        }
-        @media (pointer: coarse) {
-            #controls-hint {
-                display: none;
-            }
-        }
+        #action-button:active { transform: scale(0.9); background: rgba(233,69,96,1); }
+        @media (pointer: fine) { #touch-controls { opacity: 0.3; height: 100px; min-height: 100px; } }
         @media (max-width: 500px) {
-            #touch-controls {
-                padding: 10px 20px;
-                height: 130px;
-                min-height: 130px;
-            }
-            #joystick-area {
-                width: 100px;
-                height: 100px;
-            }
-            #joystick-knob {
-                width: 40px;
-                height: 40px;
-            }
-            #action-button {
-                width: 60px;
-                height: 60px;
-                font-size: 20px;
-            }
+            #touch-controls { padding: 10px 15px; height: 120px; min-height: 120px; }
+            #joystick-area { width: 90px; height: 90px; }
+            #joystick-knob { width: 36px; height: 36px; }
+            #action-button { width: 60px; height: 60px; font-size: 18px; }
+        }
+        /* Экран создания персонажа (поверх игры) */
+        #creation-screen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 20px;
+            color: #fff;
+            font-size: 18px;
+        }
+        #creation-screen h1 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #e94560;
+            text-shadow: 0 0 20px rgba(233,69,96,0.3);
+        }
+        #creation-screen label {
+            margin: 8px 0 4px;
+            font-size: 16px;
+        }
+        #creation-screen input, #creation-screen select {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 2px solid #0f3460;
+            background: #1a2a3a;
+            color: #fff;
+            font-size: 16px;
+            width: 80%;
+            max-width: 300px;
+            margin-bottom: 10px;
+        }
+        #creation-screen .row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            width: 80%;
+            max-width: 400px;
+        }
+        #creation-screen .row button {
+            flex: 1;
+            min-width: 80px;
+            padding: 8px 12px;
+            background: #0f3460;
+            border: 2px solid #0f3460;
+            border-radius: 6px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+        #creation-screen .row button.selected {
+            border-color: #e94560;
+            background: #1a4a7a;
+            box-shadow: 0 0 15px rgba(233,69,96,0.3);
+        }
+        #creation-screen .start-btn {
+            margin-top: 20px;
+            padding: 12px 40px;
+            background: #e94560;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: bold;
+        }
+        #creation-screen .start-btn:hover { background: #c73652; transform: scale(1.05); }
+        #creation-screen .start-btn:active { transform: scale(0.95); }
+        #creation-screen .desc {
+            font-size: 14px;
+            color: #aaa;
+            margin-top: 5px;
+            max-width: 400px;
+            text-align: center;
         }
     </style>
 </head>
@@ -171,13 +182,50 @@
 <div id="game-container">
     <div id="canvas-wrapper">
         <canvas id="gameCanvas"></canvas>
-        <div id="ui-overlay">🗲 Доктор Кто: Измерения</div>
-        <div id="controls-hint">↑↓←→ / WASD — движение | E — взаимодействие</div>
+        <!-- Экран создания персонажа -->
+        <div id="creation-screen">
+            <h1>⚔️ СОЗДАНИЕ ПЕРСОНАЖА</h1>
+            <label>Имя:</label>
+            <input type="text" id="player-name" value="Искатель" maxlength="20">
+            <label>Цвет куртки:</label>
+            <div class="row" id="color-options">
+                <button data-color="#2a6a9a" class="selected">Синий</button>
+                <button data-color="#8b3a3a">Красный</button>
+                <button data-color="#3a7a3a">Зелёный</button>
+                <button data-color="#8a6a3a">Коричневый</button>
+            </div>
+            <label>Стартовый покемон:</label>
+            <select id="starter-pokemon">
+                <option value="Бульбазавр">🌱 Бульбазавр</option>
+                <option value="Чармандер">🔥 Чармандер</option>
+                <option value="Сквиртл">💧 Сквиртл</option>
+                <option value="Пикачу">⚡ Пикачу</option>
+                <option value="Иви">🌟 Иви</option>
+                <option value="Драттини">🐉 Драттини</option>
+                <option value="Лавита">🪨 Лавита</option>
+                <option value="Риолу">🥋 Риолу</option>
+                <option value="Гибли">🌙 Гибли</option>
+                <option value="Зоруа">🦊 Зоруа</option>
+            </select>
+            <label>Способность из Mortal Kombat:</label>
+            <select id="mk-ability">
+                <option value="Ледяные шары">❄️ Ледяные шары (замедление)</option>
+                <option value="Огненный шар">🔥 Огненный шар (урон)</option>
+                <option value="Телепортация">🌀 Телепортация (рывок)</option>
+                <option value="Теневой удар">👻 Теневой удар (контроль)</option>
+                <option value="Молния">⚡ Молния (паралич)</option>
+                <option value="Исцеление">💚 Исцеление (восстановление)</option>
+                <option value="Землетрясение">🌍 Землетрясение (АОЕ)</option>
+                <option value="Щит">🛡️ Щит (защита)</option>
+                <option value="Ядовитое облако">☠️ Ядовитое облако (длительный урон)</option>
+                <option value="Клон">👥 Клон (отвлекающий маневр)</option>
+            </select>
+            <div class="desc" id="ability-desc">Выберите способность для описания</div>
+            <button class="start-btn" id="start-game-btn">🚀 НАЧАТЬ ИГРУ</button>
+        </div>
     </div>
     <div id="touch-controls">
-        <div id="joystick-area">
-            <div id="joystick-knob"></div>
-        </div>
+        <div id="joystick-area"><div id="joystick-knob"></div></div>
         <div id="action-button">E</div>
     </div>
 </div>
