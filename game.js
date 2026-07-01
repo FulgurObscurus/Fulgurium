@@ -1,4 +1,4 @@
-// game.js
+﻿// game.js
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -7,25 +7,46 @@ const joystickArea = document.getElementById('joystick-area');
 const joystickKnob = document.getElementById('joystick-knob');
 const actionBtn = document.getElementById('action-button');
 
+// Размеры карты в тайлах
 const TILE_SIZE = 48;
 const COLS = 25;
 const ROWS = 20;
 const MAP_WIDTH = COLS * TILE_SIZE;
 const MAP_HEIGHT = ROWS * TILE_SIZE;
 
+// Адаптивный canvas под размер контейнера
 function resizeCanvas() {
-    const maxWidth = window.innerWidth * 0.9;
-    const maxHeight = window.innerHeight * 0.9;
-    const scale = Math.min(maxWidth / MAP_WIDTH, maxHeight / MAP_HEIGHT, 1.2);
+    const wrapper = document.getElementById('canvas-wrapper');
+    const rect = wrapper.getBoundingClientRect();
+    const w = rect.width;
+    const h = rect.height;
+    // Сохраняем соотношение сторон карты (MAP_WIDTH / MAP_HEIGHT)
+    const aspect = MAP_WIDTH / MAP_HEIGHT;
+    let displayWidth = w;
+    let displayHeight = h;
+    if (displayWidth / displayHeight > aspect) {
+        displayWidth = displayHeight * aspect;
+    } else {
+        displayHeight = displayWidth / aspect;
+    }
+    // Масштаб для рисования
+    const scaleX = displayWidth / MAP_WIDTH;
+    const scaleY = displayHeight / MAP_HEIGHT;
+    const scale = Math.min(scaleX, scaleY);
     canvas.width = MAP_WIDTH * scale;
     canvas.height = MAP_HEIGHT * scale;
     canvas.style.width = canvas.width + 'px';
     canvas.style.height = canvas.height + 'px';
     canvas._scale = scale;
+    // Центрируем canvas в wrapper
+    canvas.style.position = 'absolute';
+    canvas.style.left = (w - canvas.width) / 2 + 'px';
+    canvas.style.top = (h - canvas.height) / 2 + 'px';
 }
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
+// ---------- Данные локаций (без изменений) ----------
 const maps = {
     earth: {
         name: 'Земля',
@@ -89,6 +110,7 @@ const maps = {
     }
 };
 
+// ---------- Состояние игры ----------
 let currentMap = 'earth';
 let player = {
     x: 5 * TILE_SIZE + TILE_SIZE/2,
@@ -102,9 +124,11 @@ let camera = { x: 0, y: 0 };
 let dialogActive = false;
 let dialogText = '';
 
+// Джойстик
 let joystickActive = false;
 let joystickDir = { x: 0, y: 0 };
 
+// Клавиатура
 let keys = {};
 
 function getMap() { return maps[currentMap]; }
@@ -224,6 +248,7 @@ function interact() {
     setTimeout(() => { dialogActive = false; dialogText = ''; }, 1500);
 }
 
+// ---------- Клавиатура ----------
 document.addEventListener('keydown', (e) => {
     keys[e.key] = true;
     if (e.key === 'e' || e.key === 'E') {
@@ -234,6 +259,7 @@ document.addEventListener('keyup', (e) => {
     keys[e.key] = false;
 });
 
+// ---------- Джойстик ----------
 function handleJoystickStart(e) {
     e.preventDefault();
     joystickActive = true;
@@ -279,6 +305,7 @@ actionBtn.addEventListener('touchstart', (e) => {
 }, { passive: false });
 actionBtn.addEventListener('click', interact);
 
+// ---------- Обновление игрока ----------
 function updatePlayer() {
     let dx = 0, dy = 0;
     if (keys['ArrowUp'] || keys['w'] || keys['W']) dy = -player.speed;
@@ -325,6 +352,7 @@ function updatePlayer() {
     player.y = Math.max(player.radius, Math.min(MAP_HEIGHT - player.radius, player.y));
 }
 
+// ---------- Камера ----------
 function updateCamera() {
     const scale = canvas._scale || 1;
     const viewW = canvas.width / scale;
@@ -335,6 +363,7 @@ function updateCamera() {
     camera.y = Math.max(0, Math.min(MAP_HEIGHT - viewH, camera.y));
 }
 
+// ---------- Отрисовка ----------
 function draw() {
     const scale = canvas._scale || 1;
     ctx.save();
@@ -434,6 +463,7 @@ function draw() {
     ctx.restore();
 }
 
+// ---------- Игровой цикл ----------
 function gameLoop() {
     updatePlayer();
     updateCamera();
