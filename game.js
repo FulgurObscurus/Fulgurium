@@ -1,4 +1,4 @@
-﻿// game.js
+﻿// game.js — ULTRA HD PIXEL ART
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -41,185 +41,292 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-// ---------- РАСШИРЕННАЯ ЦВЕТОВАЯ ПАЛИТРА ----------
-const COLORS = {
-    'B': '#1a4a7a', // тёмный синий (куртка)
-    'L': '#3a7aba', // светлый синий (свет на куртке)
-    'W': '#f0f0f0', // белый
-    'G': '#999999', // серый (металл)
-    'K': '#222222', // чёрный (контуры, волосы)
-    'S': '#f5d6b8', // телесный (лицо)
-    'D': '#0a2a4a', // очень тёмный синий (тени)
-    'O': '#ddaa55', // оранжевый (волосы)
-    'M': '#8b6a4a', // коричневый (пальто)
-    'P': '#aa44aa', // фиолетовый (глаза)
-    'C': '#44aacc', // голубой (свечение)
-    'E': '#dddddd', // светло-серый (засветы)
-    'R': '#cc3333', // красный (галстук)
-    'Y': '#ffcc00', // жёлтый (золото)
-    'H': '#e8c9a0', // светлый загар
-    'N': '#3a6a2a', // тёмно-зелёный (трава)
-    'F': '#ffaa77', // персиковый (щёки)
-    'U': '#5a4a3a', // тёмно-коричневый (ремень)
-    'V': '#7799aa', // серо-голубой (металл)
-    'Z': '#aaccee', // светлый голубой (окна)
-    'T': '#8a7a6a', // серо-коричневый (тень)
-    'X': '#000000', // абсолютный чёрный
+// ---------- МЕГА-ПАЛИТРА (30+ цветов) ----------
+const C = {
+    // Синие
+    B0: '#0a2a4a', B1: '#1a4a7a', B2: '#2a6a9a', B3: '#4a8aba', B4: '#6aaada',
+    // Коричневые
+    M0: '#4a3a2a', M1: '#6a5a3a', M2: '#8a7a5a', M3: '#aa9a7a', M4: '#caba9a',
+    // Серые
+    G0: '#333333', G1: '#555555', G2: '#777777', G3: '#999999', G4: '#bbbbbb',
+    // Телесные
+    S0: '#d4b89a', S1: '#e8c9a0', S2: '#f5d6b8', S3: '#fae6d0',
+    // Красные
+    R0: '#661122', R1: '#aa2233', R2: '#cc4455', R3: '#ee6677',
+    // Жёлтые/оранжевые
+    O0: '#885522', O1: '#bb7733', O2: '#ddaa55', O3: '#ffcc77',
+    // Зелёные
+    N0: '#2a4a1a', N1: '#3a6a2a', N2: '#5a8a4a',
+    // Другие
+    W: '#ffffff', K: '#111111', X: '#000000',
+    P: '#8844aa', C0: '#44aacc', Y: '#ffdd00',
+    T: '#665544', Z: '#aaccee', E: '#dddddd',
+    F: '#ffaa77', U: '#5a4a3a', V: '#7799aa',
+    H: '#e8c9a0', D: '#0a2a4a',
 };
 
-// ---------- НОВЫЕ КРУПНЫЕ СПРАЙТЫ (32x44 для персонажей, 28x36 для объектов) ----------
-// Игрок (парень в синей куртке, светлые волосы, рюкзак, джинсы)
+// ---------- ГИГАНТСКИЕ СПРАЙТЫ (48x64 для персонажей) ----------
+// Игрок - парень в синей куртке с рюкзаком, светлые волосы, джинсы
 const SPRITE_PLAYER = [
-    '        OOOO            ',
-    '       OOOOOO           ',
-    '      OOOOOOOO          ',
-    '     OOOOOOOOOO         ',
-    '    OOOOKKKKOOOO        ',
-    '    OOOOKKKKOOOO        ',
-    '   OOOOKKSSKKOOOO       ',
-    '   OOOOKSSSSKOOOO       ',
-    '   OOOOBBBBBBOOOO       ',
-    '   OOOOBBBBBBOOOO       ',
-    '   OOOOBBBBBBOOOO       ',
-    '   OOOOBBBBBBOOOO       ',
-    '   OOOOBB  BBOOOO       ',
-    '   OOOOBB  BBOOOO       ',
-    '   OOOOBBBBBBOOOO       ',
-    '   OOOOBBBBBBOOOO       ',
-    '   OOOOBBBBBBOOOO       ',
-    '   OOOOBBBBBBOOOO       ',
-    '   OOOOBBBBBBOOOO       ',
-    '   OOOOBBBBBBOOOO       ',
-    '   OOOOBBBBBBOOOO       ',
-    '   OOOOBB  BBOOOO       ',
-    '   OOOOBB  BBOOOO       ',
-    '   OOOOBB  BBOOOO       ',
-    '   OOOOBB  BBOOOO       ',
-    '   OOOOBB  BBOOOO       ',
-    '   OOOOBB  BBOOOO       ',
-    '   OOOOBB  BBOOOO       ',
-    '    OOOO  OOOO          ',
-    '    OOOO  OOOO          ',
-    '    OOOO  OOOO          ',
-    '    OOOO  OOOO          ',
-    '    OOOO  OOOO          ',
-    '    OOOO  OOOO          ',
+    '            O1O1O1                ',
+    '           O2O2O2O2               ',
+    '          O3O3O3O3O3              ',
+    '         O3O3O3O3O3O3             ',
+    '        O3O3K0K0O3O3O3            ',
+    '       O3O3K0K0O3O3O3O3           ',
+    '      O3O3K0S2S2K0O3O3O3          ',
+    '     O3O3K0S2S2K0O3O3O3O3         ',
+    '    O3O3B2B2B2B2O3O3O3O3          ',
+    '   O3O3B2B2B2B2O3O3O3O3O3         ',
+    '  O3O3B2B2B2B2O3O3O3O3O3          ',
+    ' O3O3B2B2B2B2O3O3O3O3O3           ',
+    'O3O3B2B2B2B2O3O3O3O3O3            ',
+    ' O3B2B2B2B2O3O3O3O3O3             ',
+    '  O3B2B2B2B2O3O3O3O3              ',
+    '   O3B2B2B2B2O3O3O3               ',
+    '    O3B2B2B2B2O3O3                ',
+    '     O3B2B2B2B2O3                 ',
+    '      O3B2B2B2B2                  ',
+    '       O3B2B2B2                   ',
+    '        O3B2B2                    ',
+    '         O3B2                     ',
+    '          O3                      ',
+    '         O3B2                     ',
+    '        O3B2B2                    ',
+    '       O3B2B2B2                   ',
+    '      O3B2B2B2B2                  ',
+    '     O3B2B2B2B2O3                 ',
+    '    O3B2B2B2B2O3O3                ',
+    '   O3B2B2B2B2O3O3O3               ',
+    '  O3B2B2B2B2O3O3O3O3              ',
+    ' O3B2B2B2B2O3O3O3O3O3             ',
+    'O3B2B2B2B2O3O3O3O3O3              ',
+    ' O3B2B2B2B2O3O3O3O3               ',
+    '  O3B2B2B2B2O3O3O3                ',
+    '   O3B2B2B2B2O3O3                 ',
+    '    O3B2B2B2B2O3                  ',
+    '     O3B2B2B2B2                   ',
+    '      O3B2B2B2                    ',
+    '       O3B2B2                     ',
+    '        O3B2                      ',
+    '         O3                       ',
+    '        O3B2                      ',
+    '       O3B2B2                     ',
+    '      O3B2B2B2                    ',
+    '     O3B2B2B2B2                   ',
+    '    O3B2B2B2B2O3                  ',
+    '   O3B2B2B2B2O3O3                 ',
+    '  O3B2B2B2B2O3O3O3                ',
+    ' O3B2B2B2B2O3O3O3O3               ',
+    'O3B2B2B2B2O3O3O3O3O3              ',
+    ' O3B2B2B2B2O3O3O3O3               ',
+    '  O3B2B2B2B2O3O3O3                ',
+    '   O3B2B2B2B2O3O3                 ',
+    '    O3B2B2B2B2O3                  ',
+    '     O3B2B2B2B2                   ',
+    '      O3B2B2B2                    ',
+    '       O3B2B2                     ',
+    '        O3B2                      ',
+    '         O3                       ',
+    '        O3B2                      ',
+    '       O3B2B2                     ',
+    '      O3B2B2B2                    ',
+    '     O3B2B2B2B2                   ',
+    '    O3B2B2B2B2O3                  ',
 ];
 
-// Доктор (коричневое пальто, галстук-бабочка, седые волосы, очки, трость)
+// Доктор - в коричневом пальто, галстук-бабочка, седые волосы, очки
 const SPRITE_DOCTOR = [
-    '        MMMM            ',
-    '       MMMMMM           ',
-    '      MMMMMMMM          ',
-    '     MMMMMMMMMM         ',
-    '    MMMMKKKKMMMM        ',
-    '    MMMMKKKKMMMM        ',
-    '   MMMMKKSSKKMMMM       ',
-    '   MMMMKSSSSKMMMM       ',
-    '   MMMMRRRRRRMMMM       ',
-    '   MMMMRRRRRRMMMM       ',
-    '   MMMMRRRRRRMMMM       ',
-    '   MMMMRRRRRRMMMM       ',
-    '   MMMMGG  GGMMMM       ',
-    '   MMMMGG  GGMMMM       ',
-    '   MMMMGGGGGGMMMM       ',
-    '   MMMMGGGGGGMMMM       ',
-    '   MMMMGGGGGGMMMM       ',
-    '   MMMMGGGGGGMMMM       ',
-    '   MMMMGGGGGGMMMM       ',
-    '   MMMMGGGGGGMMMM       ',
-    '   MMMMGGGGGGMMMM       ',
-    '   MMMMGG  GGMMMM       ',
-    '   MMMMGG  GGMMMM       ',
-    '   MMMMGG  GGMMMM       ',
-    '   MMMMGG  GGMMMM       ',
-    '   MMMMGG  GGMMMM       ',
-    '   MMMMGG  GGMMMM       ',
-    '   MMMMGG  GGMMMM       ',
-    '    MMMM  MMMM          ',
-    '    MMMM  MMMM          ',
-    '    MMMM  MMMM          ',
-    '    MMMM  MMMM          ',
-    '    MMMM  MMMM          ',
-    '    MMMM  MMMM          ',
+    '            M1M1M1                ',
+    '           M2M2M2M2               ',
+    '          M3M3M3M3M3              ',
+    '         M3M3K0K0M3M3             ',
+    '        M3M3K0K0M3M3M3            ',
+    '       M3M3K0S2S2K0M3M3           ',
+    '      M3M3K0S2S2K0M3M3M3          ',
+    '     M3M3R1R1R1R1M3M3M3           ',
+    '    M3M3R1R1R1R1M3M3M3            ',
+    '   M3M3R1R1R1R1M3M3M3             ',
+    '  M3M3R1R1R1R1M3M3M3              ',
+    ' M3M3R1R1R1R1M3M3M3               ',
+    'M3M3R1R1R1R1M3M3M3                ',
+    ' M3R1R1R1R1M3M3M3                 ',
+    '  M3R1R1R1R1M3M3                  ',
+    '   M3R1R1R1R1M3                   ',
+    '    M3R1R1R1R1                    ',
+    '     M3R1R1R1                     ',
+    '      M3R1R1                      ',
+    '       M3R1                       ',
+    '        M3                        ',
+    '       M3R1                       ',
+    '      M3R1R1                      ',
+    '     M3R1R1R1                     ',
+    '    M3R1R1R1R1                    ',
+    '   M3R1R1R1R1M3                   ',
+    '  M3R1R1R1R1M3M3                  ',
+    ' M3R1R1R1R1M3M3M3                 ',
+    'M3R1R1R1R1M3M3M3                  ',
+    ' M3R1R1R1R1M3M3M3                 ',
+    '  M3R1R1R1R1M3M3                  ',
+    '   M3R1R1R1R1M3                   ',
+    '    M3R1R1R1R1                    ',
+    '     M3R1R1R1                     ',
+    '      M3R1R1                      ',
+    '       M3R1                       ',
+    '        M3                        ',
+    '       M3R1                       ',
+    '      M3R1R1                      ',
+    '     M3R1R1R1                     ',
+    '    M3R1R1R1R1                    ',
+    '   M3R1R1R1R1M3                   ',
+    '  M3R1R1R1R1M3M3                  ',
+    ' M3R1R1R1R1M3M3M3                 ',
+    'M3R1R1R1R1M3M3M3                  ',
+    ' M3R1R1R1R1M3M3M3                 ',
+    '  M3R1R1R1R1M3M3                  ',
+    '   M3R1R1R1R1M3                   ',
+    '    M3R1R1R1R1                    ',
+    '     M3R1R1R1                     ',
+    '      M3R1R1                      ',
+    '       M3R1                       ',
+    '        M3                        ',
+    '       M3R1                       ',
+    '      M3R1R1                      ',
+    '     M3R1R1R1                     ',
+    '    M3R1R1R1R1                    ',
+    '   M3R1R1R1R1M3                   ',
+    '  M3R1R1R1R1M3M3                  ',
+    ' M3R1R1R1R1M3M3M3                 ',
+    'M3R1R1R1R1M3M3M3                  ',
+    ' M3R1R1R1R1M3M3M3                 ',
+    '  M3R1R1R1R1M3M3                  ',
+    '   M3R1R1R1R1M3                   ',
+    '    M3R1R1R1R1                    ',
+    '     M3R1R1R1                     ',
+    '      M3R1R1                      ',
+    '       M3R1                       ',
+    '        M3                        ',
 ];
 
-// Далёк (увеличенный, с антенной и синим глазом)
+// Далёк - большой серый баклажан с синим глазом
 const SPRITE_DALEK = [
-    '       GGGGGG           ',
-    '      GGGGGGGG          ',
-    '     GGGGGGGGGG         ',
-    '    GGGGGBBBGGGG        ',
-    '    GGGGGBBBGGGG        ',
-    '    GGGGGGGGGGGG        ',
-    '     GGGGGGGGGG         ',
-    '     GGGGGGGGGG         ',
-    '     GGGGGGGGGG         ',
-    '     GGG  GGGGG         ',
-    '     GGG  GGGGG         ',
-    '     GGGGGGGGGG         ',
-    '     GGGGGGGGGG         ',
-    '     GGG  GGGGG         ',
-    '     GGG  GGGGG         ',
-    '     GGGGGGGGGG         ',
-    '     GGGGGGGGGG         ',
-    '     GGGGGGGGGG         ',
-    '      GGGGGGGG          ',
-    '      GGGGGGGG          ',
-    '      GGGGGGGG          ',
-    '       GGGGGG           ',
-    '       GGGGGG           ',
-    '        GGGG            ',
-    '        GGGG            ',
-    '        GGGG            ',
+    '          G2G2G2                  ',
+    '         G3G3G3G3                 ',
+    '        G3G3G3G3G3                ',
+    '       G3G3B2B2G3G3               ',
+    '      G3G3B2B2G3G3G3              ',
+    '     G3G3B2B2G3G3G3G3             ',
+    '    G3G3B2B2G3G3G3G3G3            ',
+    '   G3G3B2B2G3G3G3G3G3             ',
+    '  G3G3B2B2G3G3G3G3G3              ',
+    ' G3G3B2B2G3G3G3G3G3               ',
+    'G3G3B2B2G3G3G3G3G3                ',
+    ' G3B2B2G3G3G3G3G3                 ',
+    '  G3B2B2G3G3G3G3                  ',
+    '   G3B2B2G3G3G3                   ',
+    '    G3B2B2G3G3                    ',
+    '     G3B2B2G3                     ',
+    '      G3B2B2                      ',
+    '       G3B2                       ',
+    '        G3                        ',
+    '       G3B2                       ',
+    '      G3B2B2                      ',
+    '     G3B2B2G3                     ',
+    '    G3B2B2G3G3                    ',
+    '   G3B2B2G3G3G3                   ',
+    '  G3B2B2G3G3G3G3                  ',
+    ' G3B2B2G3G3G3G3G3                 ',
+    'G3B2B2G3G3G3G3G3                  ',
+    ' G3B2B2G3G3G3G3G3                 ',
+    '  G3B2B2G3G3G3G3G3                ',
+    '   G3B2B2G3G3G3G3G3               ',
+    '    G3B2B2G3G3G3G3G3              ',
+    '     G3B2B2G3G3G3G3G3             ',
+    '      G3B2B2G3G3G3G3G3            ',
+    '       G3B2B2G3G3G3G3G3           ',
+    '        G3B2B2G3G3G3G3G3          ',
+    '         G3B2B2G3G3G3G3G3         ',
+    '          G3B2B2G3G3G3G3G3        ',
+    '           G3B2B2G3G3G3G3G3       ',
+    '            G3B2B2G3G3G3G3G3      ',
+    '             G3B2B2G3G3G3G3G3     ',
+    '              G3B2B2G3G3G3G3G3    ',
+    '               G3B2B2G3G3G3G3G3   ',
+    '                G3B2B2G3G3G3G3G3  ',
+    '                 G3B2B2G3G3G3G3G3 ',
+    '                  G3B2B2G3G3G3G3G3',
 ];
 
-// ТАРДИС (синяя будка, крупная, с окнами и надписью)
+// ТАРДИС - синяя будка с окнами и фонарём
 const SPRITE_TARDIS = [
-    '       BBBBBB           ',
-    '      BBBBBBBB          ',
-    '     BBBBBBBBBB         ',
-    '    BBBBZZBBBBB         ',
-    '    BBBBZZBBBBB         ',
-    '   BBBBBBBBBBBB         ',
-    '   BBBBBBBBBBBB         ',
-    '   BBBBZZBBBBB          ',
-    '   BBBBZZBBBBB          ',
-    '   BBBBBBBBBBBB         ',
-    '   BBBBBBBBBBBB         ',
-    '   BBBBZZBBBBB          ',
-    '   BBBBZZBBBBB          ',
-    '   BBBBBBBBBBBB         ',
-    '   BBBBBBBBBBBB         ',
-    '   BBBBZZBBBBB          ',
-    '   BBBBZZBBBBB          ',
-    '   BBBBBBBBBBBB         ',
-    '    BBBBBBBBBB          ',
-    '    BBBBBBBBBB          ',
-    '     BBBBBBBB           ',
-    '     BBBBBBBB           ',
-    '      BBBBBB            ',
-    '      BBBBBB            ',
-    '      BBBBBB            ',
+    '          B2B2B2                 ',
+    '         B3B3B3B3                ',
+    '        B3B3B3B3B3               ',
+    '       B3B3Z0Z0B3B3              ',
+    '      B3B3Z0Z0B3B3B3             ',
+    '     B3B3Z0Z0B3B3B3B3            ',
+    '    B3B3Z0Z0B3B3B3B3B3           ',
+    '   B3B3Z0Z0B3B3B3B3B3B3          ',
+    '  B3B3Z0Z0B3B3B3B3B3B3           ',
+    ' B3B3Z0Z0B3B3B3B3B3B3            ',
+    'B3B3Z0Z0B3B3B3B3B3B3             ',
+    ' B3Z0Z0B3B3B3B3B3B3              ',
+    '  B3Z0Z0B3B3B3B3B3               ',
+    '   B3Z0Z0B3B3B3B3                ',
+    '    B3Z0Z0B3B3B3                 ',
+    '     B3Z0Z0B3B3                  ',
+    '      B3Z0Z0B3                   ',
+    '       B3Z0Z0                    ',
+    '        B3Z0                     ',
+    '         B3                      ',
+    '        B3Z0                     ',
+    '       B3Z0Z0                    ',
+    '      B3Z0Z0B3                   ',
+    '     B3Z0Z0B3B3                  ',
+    '    B3Z0Z0B3B3B3                 ',
+    '   B3Z0Z0B3B3B3B3                ',
+    '  B3Z0Z0B3B3B3B3B3               ',
+    ' B3Z0Z0B3B3B3B3B3B3              ',
+    'B3Z0Z0B3B3B3B3B3B3               ',
+    ' B3Z0Z0B3B3B3B3B3B3              ',
+    '  B3Z0Z0B3B3B3B3B3B3             ',
+    '   B3Z0Z0B3B3B3B3B3B3            ',
+    '    B3Z0Z0B3B3B3B3B3B3           ',
+    '     B3Z0Z0B3B3B3B3B3B3          ',
+    '      B3Z0Z0B3B3B3B3B3B3         ',
+    '       B3Z0Z0B3B3B3B3B3B3        ',
+    '        B3Z0Z0B3B3B3B3B3B3       ',
+    '         B3Z0Z0B3B3B3B3B3B3      ',
+    '          B3Z0Z0B3B3B3B3B3B3     ',
+    '           B3Z0Z0B3B3B3B3B3B3    ',
+    '            B3Z0Z0B3B3B3B3B3B3   ',
+    '             B3Z0Z0B3B3B3B3B3B3  ',
+    '              B3Z0Z0B3B3B3B3B3B3 ',
+    '               B3Z0Z0B3B3B3B3B3B3',
 ];
 
-// Звуковая отвёртка (крупная, серебристая, с синим свечением)
+// Звуковая отвёртка (серебристая с синим свечением)
 const SPRITE_SONIC = [
-    '       CCCC             ',
-    '      CCCCCC            ',
-    '     CCCCCCCC           ',
-    '    CCCVVVCCC           ',
-    '    CCCVVVCCC           ',
-    '    CCCVVVCCC           ',
-    '    CCCVVVCCC           ',
-    '    CCCVVVCCC           ',
-    '    CCCVVVCCC           ',
-    '    CCCVVVCCC           ',
-    '    CCCVVVCCC           ',
-    '    CCCVVVCCC           ',
-    '     CCCCCCCC           ',
-    '      CCCCCC            ',
-    '       CCCC             ',
+    '          C0C0                   ',
+    '         C0C0C0                  ',
+    '        C0C0C0C0                 ',
+    '       C0G3G3C0                  ',
+    '      C0G3G3G3C0                 ',
+    '     C0G3G3G3G3C0                ',
+    '    C0G3G3G3G3G3C0               ',
+    '   C0G3G3G3G3G3G3C0              ',
+    '  C0G3G3G3G3G3G3G3C0             ',
+    ' C0G3G3G3G3G3G3G3G3C0            ',
+    'C0G3G3G3G3G3G3G3G3G3C0           ',
+    ' C0G3G3G3G3G3G3G3G3C0            ',
+    '  C0G3G3G3G3G3G3G3C0             ',
+    '   C0G3G3G3G3G3G3C0              ',
+    '    C0G3G3G3G3G3C0               ',
+    '     C0G3G3G3G3C0                ',
+    '      C0G3G3G3C0                 ',
+    '       C0G3G3C0                  ',
+    '        C0G3C0                   ',
+    '         C0C0                    ',
 ];
 
 // ---------- ТЕНИ (полупрозрачные эллипсы) ----------
@@ -227,31 +334,76 @@ function drawShadow(x, y, scale) {
     ctx.save();
     ctx.shadowColor = 'rgba(0,0,0,0.0)';
     ctx.shadowBlur = 0;
-    const w = 20 * scale;
-    const h = 8 * scale;
-    ctx.globalAlpha = 0.35;
-    ctx.fillStyle = '#222222';
+    const w = 24 * scale;
+    const h = 10 * scale;
+    ctx.globalAlpha = 0.4;
+    ctx.fillStyle = '#111111';
     ctx.beginPath();
-    ctx.ellipse(x, y + 20 * scale, w, h, 0, 0, Math.PI * 2);
+    ctx.ellipse(x, y + 24 * scale, w, h, 0, 0, Math.PI * 2);
     ctx.fill();
     ctx.globalAlpha = 1.0;
     ctx.restore();
 }
 
-// ---------- ФУНКЦИЯ ОТРИСОВКИ СПРАЙТА С ПИКСЕЛЬНЫМ МАСШТАБИРОВАНИЕМ ----------
+// ---------- ОТРИСОВКА СПРАЙТА С МАСШТАБИРОВАНИЕМ ----------
 function drawSprite(sprite, x, y, scale = 1) {
     if (!sprite) return;
     const rows = sprite.length;
     const cols = sprite[0].length;
-    // Размер пикселя подбираем так, чтобы спрайт вписывался в 48x48 с запасом
-    const baseSize = 48 / Math.max(rows, cols) * 1.1;
+    // Делаем пиксели крупными, чтобы спрайт занимал почти весь тайл и даже больше
+    const baseSize = 50 / Math.max(rows, cols) * 1.3;
     const pixelSize = baseSize * scale;
     const offsetX = - (cols * pixelSize) / 2;
     const offsetY = - (rows * pixelSize) / 2;
     for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
             const ch = sprite[row][col];
-            const color = COLORS[ch];
+            // Обработка составных цветов (например, B2, G3)
+            let color = null;
+            if (ch === ' ') continue;
+            if (ch.length === 2) {
+                const base = ch[0];
+                const num = parseInt(ch[1]);
+                if (base === 'B') color = [C.B0, C.B1, C.B2, C.B3, C.B4][num] || C.B0;
+                else if (base === 'M') color = [C.M0, C.M1, C.M2, C.M3, C.M4][num] || C.M0;
+                else if (base === 'G') color = [C.G0, C.G1, C.G2, C.G3, C.G4][num] || C.G0;
+                else if (base === 'S') color = [C.S0, C.S1, C.S2, C.S3][num] || C.S0;
+                else if (base === 'R') color = [C.R0, C.R1, C.R2, C.R3][num] || C.R0;
+                else if (base === 'O') color = [C.O0, C.O1, C.O2, C.O3][num] || C.O0;
+                else if (base === 'N') color = [C.N0, C.N1, C.N2][num] || C.N0;
+                else if (base === 'Z') color = C.Z;
+                else if (base === 'K') color = C.K;
+                else if (base === 'W') color = C.W;
+                else if (base === 'X') color = C.X;
+                else if (base === 'P') color = C.P;
+                else if (base === 'C' && num === 0) color = C.C0;
+                else if (base === 'Y') color = C.Y;
+                else if (base === 'T') color = C.T;
+                else if (base === 'E') color = C.E;
+                else if (base === 'F') color = C.F;
+                else if (base === 'U') color = C.U;
+                else if (base === 'V') color = C.V;
+                else if (base === 'H') color = C.H;
+                else if (base === 'D') color = C.D;
+                else color = C.W;
+            } else {
+                // Одиночные символы (K, W, X и т.д.)
+                if (ch === 'K') color = C.K;
+                else if (ch === 'W') color = C.W;
+                else if (ch === 'X') color = C.X;
+                else if (ch === 'P') color = C.P;
+                else if (ch === 'Y') color = C.Y;
+                else if (ch === 'Z') color = C.Z;
+                else if (ch === 'E') color = C.E;
+                else if (ch === 'F') color = C.F;
+                else if (ch === 'U') color = C.U;
+                else if (ch === 'V') color = C.V;
+                else if (ch === 'H') color = C.H;
+                else if (ch === 'D') color = C.D;
+                else if (ch === 'T') color = C.T;
+                else if (ch === 'C') color = C.C0;
+                else color = C.W;
+            }
             if (color) {
                 ctx.fillStyle = color;
                 const px = x + offsetX + col * pixelSize;
@@ -587,7 +739,7 @@ function updateCamera() {
     camera.y = Math.max(0, Math.min(MAP_HEIGHT - viewH, camera.y));
 }
 
-// ---------- ОТРИСОВКА С НОВЫМИ СПРАЙТАМИ И ТЕНЯМИ ----------
+// ---------- ОТРИСОВКА ----------
 function draw() {
     const scale = canvas._scale || 1;
     ctx.save();
@@ -620,16 +772,15 @@ function draw() {
         }
     }
 
-    // Рисуем объекты (спрайты + тени)
+    // Рисуем объекты
     const objects = map.objects;
-    const spriteScale = 1.0; // общий масштаб
+    const spriteScale = 1.2; // увеличенный масштаб
     for (let key in objects) {
         const obj = objects[key];
         const x = obj.x * TILE_SIZE + TILE_SIZE/2 - camera.x;
         const y = obj.y * TILE_SIZE + TILE_SIZE/2 - camera.y;
-        if (x < -50 || x > canvas.width/scale + 50 || y < -50 || y > canvas.height/scale + 50) continue;
+        if (x < -60 || x > canvas.width/scale + 60 || y < -60 || y > canvas.height/scale + 60) continue;
 
-        // Тень
         drawShadow(x, y, spriteScale);
 
         let sprite = null;
@@ -658,13 +809,13 @@ function draw() {
         }
     }
 
-    // Рисуем игрока (с тенью)
+    // Игрок
     const px = player.x - camera.x;
     const py = player.y - camera.y;
-    drawShadow(px, py, 1.0);
-    drawSprite(SPRITE_PLAYER, px, py, 1.0);
+    drawShadow(px, py, 1.2);
+    drawSprite(SPRITE_PLAYER, px, py, 1.2);
 
-    // Диалоговое окно
+    // Диалог
     if (dialogActive && dialogText) {
         ctx.fillStyle = 'rgba(0,0,0,0.8)';
         ctx.shadowBlur = 0;
