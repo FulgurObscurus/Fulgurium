@@ -41,176 +41,217 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-// ---------- ПИКСЕЛЬНЫЕ СПРАЙТЫ (стиль Pokémon HGSS) ----------
-// Размеры: персонажи 20x24, объекты 16x20, sonic 10x12
-// Цветовая палитра (добавлены новые цвета для реализма)
-const COLOR_MAP = {
-    'B': '#2a5a8a', // тёмно-синий (ТАРДИС, куртка)
-    'L': '#4a8ab5', // светло-синий (небо, тени)
-    'W': '#ffffff', // белый
-    'G': '#888888', // серый (металл)
-    'K': '#222222', // чёрный
-    'S': '#f7d9aa', // телесный
-    'D': '#1a3a5a', // тёмный синий (глубокие тени)
-    'O': '#cc8833', // оранжевый (волосы)
-    'M': '#8b5a3a', // коричневый (пальто)
+// ---------- РАСШИРЕННАЯ ЦВЕТОВАЯ ПАЛИТРА ----------
+const COLORS = {
+    'B': '#1a4a7a', // тёмный синий (куртка)
+    'L': '#3a7aba', // светлый синий (свет на куртке)
+    'W': '#f0f0f0', // белый
+    'G': '#999999', // серый (металл)
+    'K': '#222222', // чёрный (контуры, волосы)
+    'S': '#f5d6b8', // телесный (лицо)
+    'D': '#0a2a4a', // очень тёмный синий (тени)
+    'O': '#ddaa55', // оранжевый (волосы)
+    'M': '#8b6a4a', // коричневый (пальто)
     'P': '#aa44aa', // фиолетовый (глаза)
-    'C': '#44aacc', // голубой (свет)
-    'E': '#cccccc', // светло-серый
+    'C': '#44aacc', // голубой (свечение)
+    'E': '#dddddd', // светло-серый (засветы)
     'R': '#cc3333', // красный (галстук)
     'Y': '#ffcc00', // жёлтый (золото)
-    'H': '#d4a373', // светлый загар
-    'N': '#4a6a3a', // тёмно-зелёный (трава, не используется)
-    'F': '#ff9966', // персиковый
-    'U': '#665544', // тёмно-коричневый
-    'V': '#8899aa', // серо-голубой (металл)
-    'Z': '#aaccdd', // светлый голубой
+    'H': '#e8c9a0', // светлый загар
+    'N': '#3a6a2a', // тёмно-зелёный (трава)
+    'F': '#ffaa77', // персиковый (щёки)
+    'U': '#5a4a3a', // тёмно-коричневый (ремень)
+    'V': '#7799aa', // серо-голубой (металл)
+    'Z': '#aaccee', // светлый голубой (окна)
+    'T': '#8a7a6a', // серо-коричневый (тень)
+    'X': '#000000', // абсолютный чёрный
 };
 
-// Игрок (парень в синей куртке, светлые волосы, рюкзак)
+// ---------- НОВЫЕ КРУПНЫЕ СПРАЙТЫ (32x44 для персонажей, 28x36 для объектов) ----------
+// Игрок (парень в синей куртке, светлые волосы, рюкзак, джинсы)
 const SPRITE_PLAYER = [
-    '      OOOO      ',
-    '     OOOOOO     ',
-    '    OOOOOOOO    ',
-    '   OOKKKKOOO    ',
-    '   OOKKKKOOO    ',
-    '  OOKKSSKKOOO   ',
-    '  OOKSSSSKOOO   ',
-    '  OOBBBBBBOOO   ',
-    '  OOBBBBBBOOO   ',
-    '  OOBBBBBBOOO   ',
-    '  OOBB  BBOO    ',
-    '  OOBB  BBOO    ',
-    '  OOBBBBBBOO    ',
-    '  OOOBBBBOOO    ',
-    '  OOBBBBBBOO    ',
-    '  OOBBBBBBOO    ',
-    '  OOBB  BBOO    ',
-    '  OOBB  BBOO    ',
-    '  OOBB  BBOO    ',
-    '  OOBB  BBOO    ',
-    '   OO  OO       ',
-    '   OO  OO       ',
-    '   OO  OO       ',
-    '   OO  OO       ',
+    '        OOOO            ',
+    '       OOOOOO           ',
+    '      OOOOOOOO          ',
+    '     OOOOOOOOOO         ',
+    '    OOOOKKKKOOOO        ',
+    '    OOOOKKKKOOOO        ',
+    '   OOOOKKSSKKOOOO       ',
+    '   OOOOKSSSSKOOOO       ',
+    '   OOOOBBBBBBOOOO       ',
+    '   OOOOBBBBBBOOOO       ',
+    '   OOOOBBBBBBOOOO       ',
+    '   OOOOBBBBBBOOOO       ',
+    '   OOOOBB  BBOOOO       ',
+    '   OOOOBB  BBOOOO       ',
+    '   OOOOBBBBBBOOOO       ',
+    '   OOOOBBBBBBOOOO       ',
+    '   OOOOBBBBBBOOOO       ',
+    '   OOOOBBBBBBOOOO       ',
+    '   OOOOBBBBBBOOOO       ',
+    '   OOOOBBBBBBOOOO       ',
+    '   OOOOBBBBBBOOOO       ',
+    '   OOOOBB  BBOOOO       ',
+    '   OOOOBB  BBOOOO       ',
+    '   OOOOBB  BBOOOO       ',
+    '   OOOOBB  BBOOOO       ',
+    '   OOOOBB  BBOOOO       ',
+    '   OOOOBB  BBOOOO       ',
+    '   OOOOBB  BBOOOO       ',
+    '    OOOO  OOOO          ',
+    '    OOOO  OOOO          ',
+    '    OOOO  OOOO          ',
+    '    OOOO  OOOO          ',
+    '    OOOO  OOOO          ',
+    '    OOOO  OOOO          ',
 ];
 
-// Доктор (коричневое пальто, галстук-бабочка, седые волосы)
+// Доктор (коричневое пальто, галстук-бабочка, седые волосы, очки, трость)
 const SPRITE_DOCTOR = [
-    '      MMMM      ',
-    '     MMMMMM     ',
-    '    MMMMMMMM    ',
-    '   MMKKKKMMM    ',
-    '   MMKKKKMMM    ',
-    '  MMKKSSKKMM    ',
-    '  MMKSSSSKMM    ',
-    '  MMRRRRRRMM    ',
-    '  MMRRRRRRMM    ',
-    '  MMRRRRRRMM    ',
-    '  MMGG  GGMM    ',
-    '  MMGG  GGMM    ',
-    '  MMGGGGGGMM    ',
-    '  MMMGGGGMMM    ',
-    '  MMGGGGGGMM    ',
-    '  MMGGGGGGMM    ',
-    '  MMGG  GGMM    ',
-    '  MMGG  GGMM    ',
-    '  MMGG  GGMM    ',
-    '  MMGG  GGMM    ',
-    '   MM  MM       ',
-    '   MM  MM       ',
-    '   MM  MM       ',
-    '   MM  MM       ',
+    '        MMMM            ',
+    '       MMMMMM           ',
+    '      MMMMMMMM          ',
+    '     MMMMMMMMMM         ',
+    '    MMMMKKKKMMMM        ',
+    '    MMMMKKKKMMMM        ',
+    '   MMMMKKSSKKMMMM       ',
+    '   MMMMKSSSSKMMMM       ',
+    '   MMMMRRRRRRMMMM       ',
+    '   MMMMRRRRRRMMMM       ',
+    '   MMMMRRRRRRMMMM       ',
+    '   MMMMRRRRRRMMMM       ',
+    '   MMMMGG  GGMMMM       ',
+    '   MMMMGG  GGMMMM       ',
+    '   MMMMGGGGGGMMMM       ',
+    '   MMMMGGGGGGMMMM       ',
+    '   MMMMGGGGGGMMMM       ',
+    '   MMMMGGGGGGMMMM       ',
+    '   MMMMGGGGGGMMMM       ',
+    '   MMMMGGGGGGMMMM       ',
+    '   MMMMGGGGGGMMMM       ',
+    '   MMMMGG  GGMMMM       ',
+    '   MMMMGG  GGMMMM       ',
+    '   MMMMGG  GGMMMM       ',
+    '   MMMMGG  GGMMMM       ',
+    '   MMMMGG  GGMMMM       ',
+    '   MMMMGG  GGMMMM       ',
+    '   MMMMGG  GGMMMM       ',
+    '    MMMM  MMMM          ',
+    '    MMMM  MMMM          ',
+    '    MMMM  MMMM          ',
+    '    MMMM  MMMM          ',
+    '    MMMM  MMMM          ',
+    '    MMMM  MMMM          ',
 ];
 
-// Далёк (серый баклажан с синим глазом и антенной)
+// Далёк (увеличенный, с антенной и синим глазом)
 const SPRITE_DALEK = [
-    '    GGGGGG      ',
-    '   GGGGGGGG     ',
-    '  GGGGGGGGGG    ',
-    ' GGGGBBBGGGG    ',
-    ' GGGGBBBGGGG    ',
-    ' GGGGGGGGGG     ',
-    '  GGGGGGGG      ',
-    '  GGGGGGGG      ',
-    '  GGG  GGG      ',
-    '  GGG  GGG      ',
-    '  GGGGGGGG      ',
-    '  GGGGGGGG      ',
-    '  GGG  GGG      ',
-    '  GGG  GGG      ',
-    '  GGGGGGGG      ',
-    '  GGGGGGGG      ',
-    '   GGGGGG       ',
-    '   GGGGGG       ',
-    '    GGGG        ',
-    '    GGGG        ',
+    '       GGGGGG           ',
+    '      GGGGGGGG          ',
+    '     GGGGGGGGGG         ',
+    '    GGGGGBBBGGGG        ',
+    '    GGGGGBBBGGGG        ',
+    '    GGGGGGGGGGGG        ',
+    '     GGGGGGGGGG         ',
+    '     GGGGGGGGGG         ',
+    '     GGGGGGGGGG         ',
+    '     GGG  GGGGG         ',
+    '     GGG  GGGGG         ',
+    '     GGGGGGGGGG         ',
+    '     GGGGGGGGGG         ',
+    '     GGG  GGGGG         ',
+    '     GGG  GGGGG         ',
+    '     GGGGGGGGGG         ',
+    '     GGGGGGGGGG         ',
+    '     GGGGGGGGGG         ',
+    '      GGGGGGGG          ',
+    '      GGGGGGGG          ',
+    '      GGGGGGGG          ',
+    '       GGGGGG           ',
+    '       GGGGGG           ',
+    '        GGGG            ',
+    '        GGGG            ',
+    '        GGGG            ',
 ];
 
-// ТАРДИС (синяя будка с окнами)
+// ТАРДИС (синяя будка, крупная, с окнами и надписью)
 const SPRITE_TARDIS = [
-    '     BB         ',
-    '    BBBB        ',
-    '    BBBB        ',
-    '   BBWWBB       ',
-    '   BBWWBB       ',
-    '  BBBBBBBB      ',
-    '  BBBBBBBB      ',
-    '  BBWWBBBB      ',
-    '  BBWWBBBB      ',
-    '  BBBBBBBB      ',
-    '  BBBBBBBB      ',
-    '  BBWWBBBB      ',
-    '  BBWWBBBB      ',
-    '  BBBBBBBB      ',
-    '  BBBBBBBB      ',
-    '   BBBBBB       ',
-    '   BBBBBB       ',
-    '    BBBB        ',
-    '    BBBB        ',
-    '    BBBB        ',
+    '       BBBBBB           ',
+    '      BBBBBBBB          ',
+    '     BBBBBBBBBB         ',
+    '    BBBBZZBBBBB         ',
+    '    BBBBZZBBBBB         ',
+    '   BBBBBBBBBBBB         ',
+    '   BBBBBBBBBBBB         ',
+    '   BBBBZZBBBBB          ',
+    '   BBBBZZBBBBB          ',
+    '   BBBBBBBBBBBB         ',
+    '   BBBBBBBBBBBB         ',
+    '   BBBBZZBBBBB          ',
+    '   BBBBZZBBBBB          ',
+    '   BBBBBBBBBBBB         ',
+    '   BBBBBBBBBBBB         ',
+    '   BBBBZZBBBBB          ',
+    '   BBBBZZBBBBB          ',
+    '   BBBBBBBBBBBB         ',
+    '    BBBBBBBBBB          ',
+    '    BBBBBBBBBB          ',
+    '     BBBBBBBB           ',
+    '     BBBBBBBB           ',
+    '      BBBBBB            ',
+    '      BBBBBB            ',
+    '      BBBBBB            ',
 ];
 
-// Звуковая отвёртка (серебристая с синим наконечником)
+// Звуковая отвёртка (крупная, серебристая, с синим свечением)
 const SPRITE_SONIC = [
-    '     KK         ',
-    '    KKKK        ',
-    '   KKKKKK       ',
-    '  KKVKKVKK      ',
-    '  KKVKKVKK      ',
-    '  KKVKKVKK      ',
-    '  KKVKKVKK      ',
-    '  KKVKKVKK      ',
-    '  KKVKKVKK      ',
-    '   KKKKKK       ',
-    '    KKKK        ',
-    '     KK         ',
+    '       CCCC             ',
+    '      CCCCCC            ',
+    '     CCCCCCCC           ',
+    '    CCCVVVCCC           ',
+    '    CCCVVVCCC           ',
+    '    CCCVVVCCC           ',
+    '    CCCVVVCCC           ',
+    '    CCCVVVCCC           ',
+    '    CCCVVVCCC           ',
+    '    CCCVVVCCC           ',
+    '    CCCVVVCCC           ',
+    '    CCCVVVCCC           ',
+    '     CCCCCCCC           ',
+    '      CCCCCC            ',
+    '       CCCC             ',
 ];
 
-// Маппинг ключей объектов к спрайтам
-const SPRITE_MAP = {
-    player: SPRITE_PLAYER,
-    doctor: SPRITE_DOCTOR,
-    dalek: SPRITE_DALEK,
-    tardis: SPRITE_TARDIS,
-    sonic: SPRITE_SONIC,
-    advisor: SPRITE_DOCTOR, // советник использует спрайт доктора
-};
+// ---------- ТЕНИ (полупрозрачные эллипсы) ----------
+function drawShadow(x, y, scale) {
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.0)';
+    ctx.shadowBlur = 0;
+    const w = 20 * scale;
+    const h = 8 * scale;
+    ctx.globalAlpha = 0.35;
+    ctx.fillStyle = '#222222';
+    ctx.beginPath();
+    ctx.ellipse(x, y + 20 * scale, w, h, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1.0;
+    ctx.restore();
+}
 
-// ---------- Функция отрисовки спрайта с пиксельным масштабированием ----------
+// ---------- ФУНКЦИЯ ОТРИСОВКИ СПРАЙТА С ПИКСЕЛЬНЫМ МАСШТАБИРОВАНИЕМ ----------
 function drawSprite(sprite, x, y, scale = 1) {
     if (!sprite) return;
     const rows = sprite.length;
     const cols = sprite[0].length;
-    // Размер пикселя: подгоняем, чтобы спрайт помещался в тайл (40x40 примерно)
-    const baseSize = Math.min(40 / rows, 40 / cols) * 1.2;
+    // Размер пикселя подбираем так, чтобы спрайт вписывался в 48x48 с запасом
+    const baseSize = 48 / Math.max(rows, cols) * 1.1;
     const pixelSize = baseSize * scale;
     const offsetX = - (cols * pixelSize) / 2;
     const offsetY = - (rows * pixelSize) / 2;
     for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
             const ch = sprite[row][col];
-            const color = COLOR_MAP[ch];
+            const color = COLORS[ch];
             if (color) {
                 ctx.fillStyle = color;
                 const px = x + offsetX + col * pixelSize;
@@ -285,7 +326,7 @@ const maps = {
     }
 };
 
-// ---------- Игровое состояние ----------
+// ---------- ИГРОВОЕ СОСТОЯНИЕ ----------
 let currentMap = 'earth';
 let player = {
     x: 5 * TILE_SIZE + TILE_SIZE/2,
@@ -420,7 +461,7 @@ function interact() {
     setTimeout(() => { dialogActive = false; dialogText = ''; }, 1500);
 }
 
-// ---------- Клавиатура ----------
+// ---------- КЛАВИАТУРА ----------
 document.addEventListener('keydown', (e) => {
     const code = e.code;
     if (code === 'KeyW' || code === 'KeyA' || code === 'KeyS' || code === 'KeyD' ||
@@ -443,7 +484,7 @@ document.addEventListener('keyup', (e) => {
     keys[code] = false;
 });
 
-// ---------- Джойстик ----------
+// ---------- ДЖОЙСТИК ----------
 function handleJoystickStart(e) {
     e.preventDefault();
     joystickActive = true;
@@ -489,7 +530,7 @@ actionBtn.addEventListener('touchstart', (e) => {
 }, { passive: false });
 actionBtn.addEventListener('click', interact);
 
-// ---------- Игровая логика ----------
+// ---------- ИГРОВАЯ ЛОГИКА ----------
 function updatePlayer() {
     let dx = 0, dy = 0;
     if (keys['ArrowUp'] || keys['KeyW']) dy = -player.speed;
@@ -546,7 +587,7 @@ function updateCamera() {
     camera.y = Math.max(0, Math.min(MAP_HEIGHT - viewH, camera.y));
 }
 
-// ---------- Отрисовка ----------
+// ---------- ОТРИСОВКА С НОВЫМИ СПРАЙТАМИ И ТЕНЯМИ ----------
 function draw() {
     const scale = canvas._scale || 1;
     ctx.save();
@@ -579,14 +620,17 @@ function draw() {
         }
     }
 
-    // Рисуем объекты (спрайты)
+    // Рисуем объекты (спрайты + тени)
     const objects = map.objects;
-    const spriteScale = 0.9; // общий масштаб для всех спрайтов (можно подогнать)
+    const spriteScale = 1.0; // общий масштаб
     for (let key in objects) {
         const obj = objects[key];
         const x = obj.x * TILE_SIZE + TILE_SIZE/2 - camera.x;
         const y = obj.y * TILE_SIZE + TILE_SIZE/2 - camera.y;
-        if (x < -30 || x > canvas.width/scale + 30 || y < -30 || y > canvas.height/scale + 30) continue;
+        if (x < -50 || x > canvas.width/scale + 50 || y < -50 || y > canvas.height/scale + 50) continue;
+
+        // Тень
+        drawShadow(x, y, spriteScale);
 
         let sprite = null;
         if (key === 'tardis') sprite = SPRITE_TARDIS;
@@ -614,8 +658,11 @@ function draw() {
         }
     }
 
-    // Рисуем игрока
-    drawSprite(SPRITE_PLAYER, player.x - camera.x, player.y - camera.y, 0.9);
+    // Рисуем игрока (с тенью)
+    const px = player.x - camera.x;
+    const py = player.y - camera.y;
+    drawShadow(px, py, 1.0);
+    drawSprite(SPRITE_PLAYER, px, py, 1.0);
 
     // Диалоговое окно
     if (dialogActive && dialogText) {
@@ -646,7 +693,7 @@ function draw() {
     ctx.restore();
 }
 
-// ---------- Игровой цикл ----------
+// ---------- ИГРОВОЙ ЦИКЛ ----------
 function gameLoop() {
     updatePlayer();
     updateCamera();
