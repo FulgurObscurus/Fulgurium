@@ -41,6 +41,115 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
+// ---------- ПИКСЕЛЬНЫЕ СПРАЙТЫ ----------
+// Каждый спрайт — массив строк, каждая строка — ряд пикселей.
+// Символы: B=синий, W=белый, G=серый, R=красный, Y=жёлтый, K=чёрный, S=телесный, D=тёмно-синий, L=светло-синий, O=оранжевый, M=коричневый, P=фиолетовый, C=голубой, E=светло-серый.
+
+const SPRITES = {
+    player: [
+        '    BB    ',
+        '   BBBB   ',
+        '  BBBBBB  ',
+        '  BKKBKB  ',
+        '  BBBBBB  ',
+        '  BB  BB  ',
+        '  BB  BB  ',
+        ' BBBBBBBB ',
+        ' BBBBBBBB ',
+        ' B B  B B ',
+        ' B B  B B ',
+        '  B    B  ',
+    ],
+    doctor: [
+        '    MM    ',
+        '   MMMM   ',
+        '  MMMMMM  ',
+        '  MWKWM   ',
+        '  MMMMMM  ',
+        '  MM  MM  ',
+        '  MM  MM  ',
+        ' MMMMMMMM ',
+        ' MMMMMMMM ',
+        ' M M  M M ',
+        ' M M  M M ',
+        '  M    M  ',
+    ],
+    dalek: [
+        '   GGGG   ',
+        '  GGGGGG  ',
+        ' GGGGGGGG ',
+        ' GGBBBGG  ',
+        ' GGGGGGGG ',
+        '  GGGGGG  ',
+        '  G GGGG  ',
+        '  G G  G  ',
+        '  G G  G  ',
+        '  GGGGGG  ',
+        '  GG  GG  ',
+        '  G    G  ',
+    ],
+    tardis: [
+        '   BB     ',
+        '  BBBB    ',
+        '  BBBB    ',
+        ' BBWWBBB  ',
+        ' BBWWBBB  ',
+        ' BBBBBBBB ',
+        ' BBBBBBBB ',
+        ' BBWWBBB  ',
+        ' BBWWBBB  ',
+        ' BBBBBBBB ',
+        ' BBBBBBBB ',
+        '   BB     ',
+    ],
+    sonic: [
+        '   KK   ',
+        '  KKKK  ',
+        '  KKKK  ',
+        '  KKKK  ',
+        '  KKKK  ',
+        '   KK   ',
+    ],
+};
+
+// Функция отрисовки спрайта по матрице
+function drawSprite(sprite, x, y, scale = 1) {
+    const rows = sprite.length;
+    const cols = sprite[0].length;
+    const pixelSize = 3 * scale; // базовый размер пикселя, масштабируется
+    const offsetX = - (cols * pixelSize) / 2;
+    const offsetY = - (rows * pixelSize) / 2;
+    const colorMap = {
+        'B': '#2a5a8a',
+        'W': '#ffffff',
+        'G': '#888888',
+        'R': '#cc3333',
+        'Y': '#ffcc00',
+        'K': '#222222',
+        'S': '#f7d9aa',
+        'D': '#1a3a5a',
+        'L': '#4a8ab5',
+        'O': '#cc8833',
+        'M': '#8b5a3a',
+        'P': '#aa44aa',
+        'C': '#44aacc',
+        'E': '#cccccc',
+    };
+    for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+            const ch = sprite[row][col];
+            const color = colorMap[ch];
+            if (color) {
+                ctx.fillStyle = color;
+                const px = x + offsetX + col * pixelSize;
+                const py = y + offsetY + row * pixelSize;
+                ctx.fillRect(px, py, pixelSize, pixelSize);
+            }
+        }
+    }
+}
+
+// ---------- КАРТА (без изменений) ----------
 const maps = {
     earth: {
         name: 'Земля',
@@ -104,6 +213,7 @@ const maps = {
     }
 };
 
+// ---------- Игровое состояние ----------
 let currentMap = 'earth';
 let player = {
     x: 5 * TILE_SIZE + TILE_SIZE/2,
@@ -119,8 +229,6 @@ let dialogText = '';
 
 let joystickActive = false;
 let joystickDir = { x: 0, y: 0 };
-
-// Храним нажатые клавиши по их физическому коду (e.code)
 let keys = {};
 
 function getMap() { return maps[currentMap]; }
@@ -240,9 +348,8 @@ function interact() {
     setTimeout(() => { dialogActive = false; dialogText = ''; }, 1500);
 }
 
-// Обработчики клавиатуры с использованием e.code (физическое положение клавиши)
+// ---------- Клавиатура (исправлена для любой раскладки) ----------
 document.addEventListener('keydown', (e) => {
-    // Отключаем прокрутку и стандартное поведение для нужных клавиш
     const code = e.code;
     if (code === 'KeyW' || code === 'KeyA' || code === 'KeyS' || code === 'KeyD' ||
         code === 'ArrowUp' || code === 'ArrowDown' || code === 'ArrowLeft' || code === 'ArrowRight' ||
@@ -250,8 +357,6 @@ document.addEventListener('keydown', (e) => {
         e.preventDefault();
     }
     keys[code] = true;
-    // Для отладки (можно удалить)
-    // console.log('Key code:', code);
     if (code === 'KeyE') {
         interact();
     }
@@ -266,6 +371,7 @@ document.addEventListener('keyup', (e) => {
     keys[code] = false;
 });
 
+// ---------- Джойстик ----------
 function handleJoystickStart(e) {
     e.preventDefault();
     joystickActive = true;
@@ -311,9 +417,9 @@ actionBtn.addEventListener('touchstart', (e) => {
 }, { passive: false });
 actionBtn.addEventListener('click', interact);
 
+// ---------- Игровая логика ----------
 function updatePlayer() {
     let dx = 0, dy = 0;
-    // Используем физические коды клавиш
     if (keys['ArrowUp'] || keys['KeyW']) dy = -player.speed;
     if (keys['ArrowDown'] || keys['KeyS']) dy = player.speed;
     if (keys['ArrowLeft'] || keys['KeyA']) dx = -player.speed;
@@ -368,6 +474,7 @@ function updateCamera() {
     camera.y = Math.max(0, Math.min(MAP_HEIGHT - viewH, camera.y));
 }
 
+// ---------- ОТРИСОВКА С ПИКСЕЛЬНЫМИ СПРАЙТАМИ ----------
 function draw() {
     const scale = canvas._scale || 1;
     ctx.save();
@@ -376,6 +483,7 @@ function draw() {
     ctx.clearRect(-camera.x, -camera.y, MAP_WIDTH, MAP_HEIGHT);
 
     const map = getMap();
+    // Рисуем тайлы
     for (let row = 0; row < ROWS; row++) {
         for (let col = 0; col < COLS; col++) {
             const x = col * TILE_SIZE - camera.x;
@@ -399,47 +507,46 @@ function draw() {
         }
     }
 
+    // Рисуем объекты (спрайты)
     const objects = map.objects;
+    const spriteScale = TILE_SIZE / 20; // подгоняем размер спрайта под тайл
     for (let key in objects) {
         const obj = objects[key];
         const x = obj.x * TILE_SIZE + TILE_SIZE/2 - camera.x;
         const y = obj.y * TILE_SIZE + TILE_SIZE/2 - camera.y;
-        if (x < -20 || x > canvas.width/scale + 20 || y < -20 || y > canvas.height/scale + 20) continue;
+        if (x < -30 || x > canvas.width/scale + 30 || y < -30 || y > canvas.height/scale + 30) continue;
 
-        ctx.shadowColor = 'rgba(0,0,0,0.5)';
-        ctx.shadowBlur = 10;
-        ctx.fillStyle = obj.color || '#888';
-        ctx.beginPath();
-        ctx.arc(x, y, 16, 0, Math.PI*2);
-        ctx.fill();
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = '#fff';
-        ctx.font = '12px monospace';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'bottom';
-        ctx.fillText(obj.label, x, y - 20);
-        if (key === 'tardis') {
-            ctx.fillStyle = '#2a5a8a';
-            ctx.fillRect(x-12, y-12, 24, 24);
+        let sprite = null;
+        if (key === 'tardis') sprite = SPRITES.tardis;
+        else if (key === 'doctor') sprite = SPRITES.doctor;
+        else if (key === 'dalek') sprite = SPRITES.dalek;
+        else if (key === 'sonic') sprite = SPRITES.sonic;
+        else if (key === 'advisor') sprite = SPRITES.doctor; // используем спрайт доктора для советника
+
+        if (sprite) {
+            drawSprite(sprite, x, y, spriteScale);
+        } else {
+            // fallback: кружок
+            ctx.shadowColor = 'rgba(0,0,0,0.5)';
+            ctx.shadowBlur = 10;
+            ctx.fillStyle = obj.color || '#888';
+            ctx.beginPath();
+            ctx.arc(x, y, 16, 0, Math.PI*2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
             ctx.fillStyle = '#fff';
-            ctx.fillRect(x-8, y-8, 4, 16);
-            ctx.fillRect(x+4, y-8, 4, 16);
+            ctx.font = '12px monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+            ctx.fillText(obj.label, x, y - 20);
         }
     }
 
-    ctx.shadowColor = 'rgba(0,200,255,0.6)';
-    ctx.shadowBlur = 20;
-    ctx.fillStyle = '#4ae0ff';
-    ctx.beginPath();
-    ctx.arc(player.x - camera.x, player.y - camera.y, player.radius, 0, Math.PI*2);
-    ctx.fill();
-    ctx.shadowBlur = 0;
-    ctx.fillStyle = '#fff';
-    ctx.font = '16px monospace';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('☺', player.x - camera.x, player.y - camera.y - 2);
+    // Рисуем игрока (спрайт)
+    const playerScale = TILE_SIZE / 20;
+    drawSprite(SPRITES.player, player.x - camera.x, player.y - camera.y, playerScale);
 
+    // Диалоговое окно
     if (dialogActive && dialogText) {
         ctx.fillStyle = 'rgba(0,0,0,0.8)';
         ctx.shadowBlur = 0;
@@ -455,6 +562,7 @@ function draw() {
         ctx.fillText(dialogText, tx + pad, ty + 25);
     }
 
+    // Инвентарь
     ctx.fillStyle = 'rgba(0,0,0,0.5)';
     ctx.fillRect(canvas.width/scale - 160, 10, 150, 30);
     ctx.fillStyle = '#fff';
@@ -467,6 +575,7 @@ function draw() {
     ctx.restore();
 }
 
+// ---------- Игровой цикл ----------
 function gameLoop() {
     updatePlayer();
     updateCamera();
