@@ -1,7 +1,11 @@
-﻿// game.js
+// game.js
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
+
+const joystickArea = document.getElementById('joystick-area');
+const joystickKnob = document.getElementById('joystick-knob');
+const actionBtn = document.getElementById('action-button');
 
 const TILE_SIZE = 48;
 const COLS = 25;
@@ -95,9 +99,13 @@ let player = {
 };
 
 let camera = { x: 0, y: 0 };
-let interactionTarget = null;
 let dialogActive = false;
 let dialogText = '';
+
+let joystickActive = false;
+let joystickDir = { x: 0, y: 0 };
+
+let keys = {};
 
 function getMap() { return maps[currentMap]; }
 
@@ -216,7 +224,6 @@ function interact() {
     setTimeout(() => { dialogActive = false; dialogText = ''; }, 1500);
 }
 
-let keys = {};
 document.addEventListener('keydown', (e) => {
     keys[e.key] = true;
     if (e.key === 'e' || e.key === 'E') {
@@ -227,12 +234,74 @@ document.addEventListener('keyup', (e) => {
     keys[e.key] = false;
 });
 
+function handleJoystickStart(e) {
+    e.preventDefault();
+    joystickActive = true;
+    updateJoystick(e);
+}
+function handleJoystickMove(e) {
+    e.preventDefault();
+    if (joystickActive) updateJoystick(e);
+}
+function handleJoystickEnd(e) {
+    e.preventDefault();
+    joystickActive = false;
+    joystickDir = { x: 0, y: 0 };
+    joystickKnob.style.transform = 'translate(-50%, -50%)';
+}
+function updateJoystick(e) {
+    const rect = joystickArea.getBoundingClientRect();
+    const touch = e.touches ? e.touches[0] : e;
+    const cx = rect.left + rect.width/2;
+    const cy = rect.top + rect.height/2;
+    let dx = touch.clientX - cx;
+    let dy = touch.clientY - cy;
+    const maxDist = rect.width/2 - 25;
+    const dist = Math.hypot(dx, dy);
+    if (dist > maxDist) {
+        dx = dx / dist * maxDist;
+        dy = dy / dist * maxDist;
+    }
+    joystickKnob.style.transform = `translate(${-50 + (dx/rect.width*100)}%, ${-50 + (dy/rect.height*100)}%)`;
+    const normX = dx / maxDist;
+    const normY = dy / maxDist;
+    joystickDir = { x: Math.min(1, Math.max(-1, normX)), y: Math.min(1, Math.max(-1, normY)) };
+}
+
+joystickArea.addEventListener('touchstart', handleJoystickStart, { passive: false });
+joystickArea.addEventListener('touchmove', handleJoystickMove, { passive: false });
+joystickArea.addEventListener('touchend', handleJoystickEnd, { passive: false });
+joystickArea.addEventListener('touchcancel', handleJoystickEnd, { passive: false });
+
+actionBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    interact();
+}, { passive: false });
+actionBtn.addEventListener('click', interact);
+
 function updatePlayer() {
     let dx = 0, dy = 0;
     if (keys['ArrowUp'] || keys['w'] || keys['W']) dy = -player.speed;
     if (keys['ArrowDown'] || keys['s'] || keys['S']) dy = player.speed;
     if (keys['ArrowLeft'] || keys['a'] || keys['A']) dx = -player.speed;
     if (keys['ArrowRight'] || keys['d'] || keys['D']) dx = player.speed;
+
+    if (joystickActive) {
+        const joyX = joystickDir.x * player.speed;
+        const joyY = joystickDir.y * player.speed;
+        if (dx === 0 && dy === 0) {
+            dx = joyX;
+            dy = joyY;
+        } else {
+            dx += joyX;
+            dy += joyY;
+            const len = Math.hypot(dx, dy);
+            if (len > player.speed) {
+                dx = dx / len * player.speed;
+                dy = dy / len * player.speed;
+            }
+        }
+    }
 
     if (dx !== 0 && dy !== 0) {
         dx *= 0.707;
@@ -342,12 +411,12 @@ function draw() {
         ctx.fillStyle = 'rgba(0,0,0,0.8)';
         ctx.shadowBlur = 0;
         const pad = 20;
+        ctx.font = '18px monospace';
         const tw = ctx.measureText(dialogText).width;
         const tx = (canvas.width/scale - tw - pad*2) / 2;
         const ty = (canvas.height/scale - 60);
         ctx.fillRect(tx, ty, tw + pad*2, 50);
         ctx.fillStyle = '#fff';
-        ctx.font = '18px monospace';
         ctx.textAlign = 'left';
         ctx.textBaseline = 'middle';
         ctx.fillText(dialogText, tx + pad, ty + 25);

@@ -1,8 +1,8 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Доктор Кто RPG</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -14,6 +14,9 @@
             height: 100vh;
             font-family: 'Courier New', monospace;
             color: #fff;
+            overflow: hidden;
+            touch-action: none;
+            user-select: none;
         }
         #game-container {
             position: relative;
@@ -21,10 +24,12 @@
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 0 40px rgba(0, 150, 255, 0.3);
+            touch-action: none;
         }
         canvas {
             display: block;
             background: #1a2a3a;
+            touch-action: none;
         }
         #ui-overlay {
             position: absolute;
@@ -49,6 +54,75 @@
             color: #aaa;
             pointer-events: none;
             user-select: none;
+            display: none;
+        }
+        #touch-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            pointer-events: none;
+            z-index: 10;
+        }
+        #joystick-area {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.3);
+            position: relative;
+            pointer-events: auto;
+            touch-action: none;
+        }
+        #joystick-knob {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.6);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            box-shadow: 0 0 20px rgba(0,200,255,0.3);
+        }
+        #action-button {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(233, 69, 96, 0.8);
+            border: 2px solid #e94560;
+            color: #fff;
+            font-size: 28px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: auto;
+            touch-action: none;
+            box-shadow: 0 0 30px rgba(233,69,96,0.4);
+            user-select: none;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+        #action-button:active {
+            transform: scale(0.9);
+            background: rgba(233, 69, 96, 1);
+        }
+        @media (pointer: fine) {
+            #touch-controls {
+                opacity: 0.4;
+            }
+            #controls-hint {
+                display: block;
+            }
+        }
+        @media (pointer: coarse) {
+            #controls-hint {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -57,6 +131,12 @@
     <canvas id="gameCanvas"></canvas>
     <div id="ui-overlay">🗲 Доктор Кто: Измерения</div>
     <div id="controls-hint">↑↓←→ / WASD — движение | E — взаимодействие</div>
+    <div id="touch-controls">
+        <div id="joystick-area">
+            <div id="joystick-knob"></div>
+        </div>
+        <div id="action-button">E</div>
+    </div>
 </div>
 <script src="game.js"></script>
 </body>
