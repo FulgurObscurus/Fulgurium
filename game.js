@@ -41,104 +41,176 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-// ---------- ПИКСЕЛЬНЫЕ СПРАЙТЫ ----------
-// Каждый спрайт — массив строк, каждая строка — ряд пикселей.
-// Символы: B=синий, W=белый, G=серый, R=красный, Y=жёлтый, K=чёрный, S=телесный, D=тёмно-синий, L=светло-синий, O=оранжевый, M=коричневый, P=фиолетовый, C=голубой, E=светло-серый.
-
-const SPRITES = {
-    player: [
-        '    BB    ',
-        '   BBBB   ',
-        '  BBBBBB  ',
-        '  BKKBKB  ',
-        '  BBBBBB  ',
-        '  BB  BB  ',
-        '  BB  BB  ',
-        ' BBBBBBBB ',
-        ' BBBBBBBB ',
-        ' B B  B B ',
-        ' B B  B B ',
-        '  B    B  ',
-    ],
-    doctor: [
-        '    MM    ',
-        '   MMMM   ',
-        '  MMMMMM  ',
-        '  MWKWM   ',
-        '  MMMMMM  ',
-        '  MM  MM  ',
-        '  MM  MM  ',
-        ' MMMMMMMM ',
-        ' MMMMMMMM ',
-        ' M M  M M ',
-        ' M M  M M ',
-        '  M    M  ',
-    ],
-    dalek: [
-        '   GGGG   ',
-        '  GGGGGG  ',
-        ' GGGGGGGG ',
-        ' GGBBBGG  ',
-        ' GGGGGGGG ',
-        '  GGGGGG  ',
-        '  G GGGG  ',
-        '  G G  G  ',
-        '  G G  G  ',
-        '  GGGGGG  ',
-        '  GG  GG  ',
-        '  G    G  ',
-    ],
-    tardis: [
-        '   BB     ',
-        '  BBBB    ',
-        '  BBBB    ',
-        ' BBWWBBB  ',
-        ' BBWWBBB  ',
-        ' BBBBBBBB ',
-        ' BBBBBBBB ',
-        ' BBWWBBB  ',
-        ' BBWWBBB  ',
-        ' BBBBBBBB ',
-        ' BBBBBBBB ',
-        '   BB     ',
-    ],
-    sonic: [
-        '   KK   ',
-        '  KKKK  ',
-        '  KKKK  ',
-        '  KKKK  ',
-        '  KKKK  ',
-        '   KK   ',
-    ],
+// ---------- ПИКСЕЛЬНЫЕ СПРАЙТЫ (стиль Pokémon HGSS) ----------
+// Размеры: персонажи 20x24, объекты 16x20, sonic 10x12
+// Цветовая палитра (добавлены новые цвета для реализма)
+const COLOR_MAP = {
+    'B': '#2a5a8a', // тёмно-синий (ТАРДИС, куртка)
+    'L': '#4a8ab5', // светло-синий (небо, тени)
+    'W': '#ffffff', // белый
+    'G': '#888888', // серый (металл)
+    'K': '#222222', // чёрный
+    'S': '#f7d9aa', // телесный
+    'D': '#1a3a5a', // тёмный синий (глубокие тени)
+    'O': '#cc8833', // оранжевый (волосы)
+    'M': '#8b5a3a', // коричневый (пальто)
+    'P': '#aa44aa', // фиолетовый (глаза)
+    'C': '#44aacc', // голубой (свет)
+    'E': '#cccccc', // светло-серый
+    'R': '#cc3333', // красный (галстук)
+    'Y': '#ffcc00', // жёлтый (золото)
+    'H': '#d4a373', // светлый загар
+    'N': '#4a6a3a', // тёмно-зелёный (трава, не используется)
+    'F': '#ff9966', // персиковый
+    'U': '#665544', // тёмно-коричневый
+    'V': '#8899aa', // серо-голубой (металл)
+    'Z': '#aaccdd', // светлый голубой
 };
 
-// Функция отрисовки спрайта по матрице
+// Игрок (парень в синей куртке, светлые волосы, рюкзак)
+const SPRITE_PLAYER = [
+    '      OOOO      ',
+    '     OOOOOO     ',
+    '    OOOOOOOO    ',
+    '   OOKKKKOOO    ',
+    '   OOKKKKOOO    ',
+    '  OOKKSSKKOOO   ',
+    '  OOKSSSSKOOO   ',
+    '  OOBBBBBBOOO   ',
+    '  OOBBBBBBOOO   ',
+    '  OOBBBBBBOOO   ',
+    '  OOBB  BBOO    ',
+    '  OOBB  BBOO    ',
+    '  OOBBBBBBOO    ',
+    '  OOOBBBBOOO    ',
+    '  OOBBBBBBOO    ',
+    '  OOBBBBBBOO    ',
+    '  OOBB  BBOO    ',
+    '  OOBB  BBOO    ',
+    '  OOBB  BBOO    ',
+    '  OOBB  BBOO    ',
+    '   OO  OO       ',
+    '   OO  OO       ',
+    '   OO  OO       ',
+    '   OO  OO       ',
+];
+
+// Доктор (коричневое пальто, галстук-бабочка, седые волосы)
+const SPRITE_DOCTOR = [
+    '      MMMM      ',
+    '     MMMMMM     ',
+    '    MMMMMMMM    ',
+    '   MMKKKKMMM    ',
+    '   MMKKKKMMM    ',
+    '  MMKKSSKKMM    ',
+    '  MMKSSSSKMM    ',
+    '  MMRRRRRRMM    ',
+    '  MMRRRRRRMM    ',
+    '  MMRRRRRRMM    ',
+    '  MMGG  GGMM    ',
+    '  MMGG  GGMM    ',
+    '  MMGGGGGGMM    ',
+    '  MMMGGGGMMM    ',
+    '  MMGGGGGGMM    ',
+    '  MMGGGGGGMM    ',
+    '  MMGG  GGMM    ',
+    '  MMGG  GGMM    ',
+    '  MMGG  GGMM    ',
+    '  MMGG  GGMM    ',
+    '   MM  MM       ',
+    '   MM  MM       ',
+    '   MM  MM       ',
+    '   MM  MM       ',
+];
+
+// Далёк (серый баклажан с синим глазом и антенной)
+const SPRITE_DALEK = [
+    '    GGGGGG      ',
+    '   GGGGGGGG     ',
+    '  GGGGGGGGGG    ',
+    ' GGGGBBBGGGG    ',
+    ' GGGGBBBGGGG    ',
+    ' GGGGGGGGGG     ',
+    '  GGGGGGGG      ',
+    '  GGGGGGGG      ',
+    '  GGG  GGG      ',
+    '  GGG  GGG      ',
+    '  GGGGGGGG      ',
+    '  GGGGGGGG      ',
+    '  GGG  GGG      ',
+    '  GGG  GGG      ',
+    '  GGGGGGGG      ',
+    '  GGGGGGGG      ',
+    '   GGGGGG       ',
+    '   GGGGGG       ',
+    '    GGGG        ',
+    '    GGGG        ',
+];
+
+// ТАРДИС (синяя будка с окнами)
+const SPRITE_TARDIS = [
+    '     BB         ',
+    '    BBBB        ',
+    '    BBBB        ',
+    '   BBWWBB       ',
+    '   BBWWBB       ',
+    '  BBBBBBBB      ',
+    '  BBBBBBBB      ',
+    '  BBWWBBBB      ',
+    '  BBWWBBBB      ',
+    '  BBBBBBBB      ',
+    '  BBBBBBBB      ',
+    '  BBWWBBBB      ',
+    '  BBWWBBBB      ',
+    '  BBBBBBBB      ',
+    '  BBBBBBBB      ',
+    '   BBBBBB       ',
+    '   BBBBBB       ',
+    '    BBBB        ',
+    '    BBBB        ',
+    '    BBBB        ',
+];
+
+// Звуковая отвёртка (серебристая с синим наконечником)
+const SPRITE_SONIC = [
+    '     KK         ',
+    '    KKKK        ',
+    '   KKKKKK       ',
+    '  KKVKKVKK      ',
+    '  KKVKKVKK      ',
+    '  KKVKKVKK      ',
+    '  KKVKKVKK      ',
+    '  KKVKKVKK      ',
+    '  KKVKKVKK      ',
+    '   KKKKKK       ',
+    '    KKKK        ',
+    '     KK         ',
+];
+
+// Маппинг ключей объектов к спрайтам
+const SPRITE_MAP = {
+    player: SPRITE_PLAYER,
+    doctor: SPRITE_DOCTOR,
+    dalek: SPRITE_DALEK,
+    tardis: SPRITE_TARDIS,
+    sonic: SPRITE_SONIC,
+    advisor: SPRITE_DOCTOR, // советник использует спрайт доктора
+};
+
+// ---------- Функция отрисовки спрайта с пиксельным масштабированием ----------
 function drawSprite(sprite, x, y, scale = 1) {
+    if (!sprite) return;
     const rows = sprite.length;
     const cols = sprite[0].length;
-    const pixelSize = 3 * scale; // базовый размер пикселя, масштабируется
+    // Размер пикселя: подгоняем, чтобы спрайт помещался в тайл (40x40 примерно)
+    const baseSize = Math.min(40 / rows, 40 / cols) * 1.2;
+    const pixelSize = baseSize * scale;
     const offsetX = - (cols * pixelSize) / 2;
     const offsetY = - (rows * pixelSize) / 2;
-    const colorMap = {
-        'B': '#2a5a8a',
-        'W': '#ffffff',
-        'G': '#888888',
-        'R': '#cc3333',
-        'Y': '#ffcc00',
-        'K': '#222222',
-        'S': '#f7d9aa',
-        'D': '#1a3a5a',
-        'L': '#4a8ab5',
-        'O': '#cc8833',
-        'M': '#8b5a3a',
-        'P': '#aa44aa',
-        'C': '#44aacc',
-        'E': '#cccccc',
-    };
     for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
             const ch = sprite[row][col];
-            const color = colorMap[ch];
+            const color = COLOR_MAP[ch];
             if (color) {
                 ctx.fillStyle = color;
                 const px = x + offsetX + col * pixelSize;
@@ -348,7 +420,7 @@ function interact() {
     setTimeout(() => { dialogActive = false; dialogText = ''; }, 1500);
 }
 
-// ---------- Клавиатура (исправлена для любой раскладки) ----------
+// ---------- Клавиатура ----------
 document.addEventListener('keydown', (e) => {
     const code = e.code;
     if (code === 'KeyW' || code === 'KeyA' || code === 'KeyS' || code === 'KeyD' ||
@@ -474,7 +546,7 @@ function updateCamera() {
     camera.y = Math.max(0, Math.min(MAP_HEIGHT - viewH, camera.y));
 }
 
-// ---------- ОТРИСОВКА С ПИКСЕЛЬНЫМИ СПРАЙТАМИ ----------
+// ---------- Отрисовка ----------
 function draw() {
     const scale = canvas._scale || 1;
     ctx.save();
@@ -509,7 +581,7 @@ function draw() {
 
     // Рисуем объекты (спрайты)
     const objects = map.objects;
-    const spriteScale = TILE_SIZE / 20; // подгоняем размер спрайта под тайл
+    const spriteScale = 0.9; // общий масштаб для всех спрайтов (можно подогнать)
     for (let key in objects) {
         const obj = objects[key];
         const x = obj.x * TILE_SIZE + TILE_SIZE/2 - camera.x;
@@ -517,16 +589,16 @@ function draw() {
         if (x < -30 || x > canvas.width/scale + 30 || y < -30 || y > canvas.height/scale + 30) continue;
 
         let sprite = null;
-        if (key === 'tardis') sprite = SPRITES.tardis;
-        else if (key === 'doctor') sprite = SPRITES.doctor;
-        else if (key === 'dalek') sprite = SPRITES.dalek;
-        else if (key === 'sonic') sprite = SPRITES.sonic;
-        else if (key === 'advisor') sprite = SPRITES.doctor; // используем спрайт доктора для советника
+        if (key === 'tardis') sprite = SPRITE_TARDIS;
+        else if (key === 'doctor') sprite = SPRITE_DOCTOR;
+        else if (key === 'dalek') sprite = SPRITE_DALEK;
+        else if (key === 'sonic') sprite = SPRITE_SONIC;
+        else if (key === 'advisor') sprite = SPRITE_DOCTOR;
 
         if (sprite) {
             drawSprite(sprite, x, y, spriteScale);
         } else {
-            // fallback: кружок
+            // fallback
             ctx.shadowColor = 'rgba(0,0,0,0.5)';
             ctx.shadowBlur = 10;
             ctx.fillStyle = obj.color || '#888';
@@ -542,9 +614,8 @@ function draw() {
         }
     }
 
-    // Рисуем игрока (спрайт)
-    const playerScale = TILE_SIZE / 20;
-    drawSprite(SPRITES.player, player.x - camera.x, player.y - camera.y, playerScale);
+    // Рисуем игрока
+    drawSprite(SPRITE_PLAYER, player.x - camera.x, player.y - camera.y, 0.9);
 
     // Диалоговое окно
     if (dialogActive && dialogText) {
